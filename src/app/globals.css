@@ -2,25 +2,46 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #1a2340;
+  --primary: #1a2340;
+  --accent: #d8f060;
+  --accent-light: #e8f5a0;
+  --surface: #eef8c4;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-accent: var(--accent);
+  --color-accent-light: var(--accent-light);
+  --color-surface: var(--surface);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ── Scroll reveal animations ── */
+.reveal {
+  opacity: 0;
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+.reveal.reveal-fade-up    { transform: translateY(48px); }
+.reveal.reveal-fade-left   { transform: translateX(-48px); }
+.reveal.reveal-fade-right  { transform: translateX(48px); }
+.reveal.reveal-zoom        { transform: scale(0.9); }
+.reveal.reveal-flip        { transform: perspective(600px) rotateY(15deg); }
+
+.reveal.revealed {
+  opacity: 1 !important;
+  transform: none !important;
 }
