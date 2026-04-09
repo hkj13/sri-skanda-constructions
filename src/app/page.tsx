@@ -18,16 +18,41 @@ import Image from "next/image";
 import { useState, useEffect, useRef, type ReactNode } from "react";
 
 /* ── Modal component ── */
+const modalVariants = {
+  surface: {
+    card: "bg-surface",
+    close: "text-primary/40 hover:text-primary",
+    title: "text-primary",
+    body: "text-primary/70",
+  },
+  dark: {
+    card: "bg-primary",
+    close: "text-accent-light/40 hover:text-accent-light",
+    title: "text-accent-light",
+    body: "text-accent-light/70",
+  },
+  overlay: {
+    card: "bg-gradient-to-br from-[#1a2340] to-[#2a3660]",
+    close: "text-accent-light/40 hover:text-accent-light",
+    title: "text-accent-light",
+    body: "text-accent-light/70",
+  },
+};
+
+type ModalVariant = keyof typeof modalVariants;
+
 function Modal({
   open,
   onClose,
   title,
   children,
+  variant = "surface",
 }: {
   open: boolean;
   onClose: () => void;
   title: string;
   children: ReactNode;
+  variant?: ModalVariant;
 }) {
   useEffect(() => {
     if (open) document.body.style.overflow = "hidden";
@@ -37,6 +62,8 @@ function Modal({
 
   if (!open) return null;
 
+  const v = modalVariants[variant];
+
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
@@ -44,18 +71,18 @@ function Modal({
     >
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
       <div
-        className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto p-6 sm:p-8"
+        className={`relative ${v.card} rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto p-6 sm:p-8`}
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-primary/40 hover:text-primary transition"
+          className={`absolute top-4 right-4 ${v.close} transition`}
           aria-label="Close"
         >
           <X className="w-5 h-5" />
         </button>
-        <h3 className="text-2xl font-bold text-primary pr-8">{title}</h3>
-        <div className="mt-4 text-primary/70 text-sm leading-relaxed space-y-3">
+        <h3 className={`text-2xl font-bold ${v.title} pr-8`}>{title}</h3>
+        <div className={`mt-4 ${v.body} text-sm leading-relaxed space-y-3`}>
           {children}
         </div>
       </div>
@@ -141,7 +168,7 @@ function Reveal({
 export default function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showTop, setShowTop] = useState(false);
-  const [popup, setPopup] = useState<{ title: string; content: ReactNode } | null>(null);
+  const [popup, setPopup] = useState<{ title: string; content: ReactNode; variant: ModalVariant } | null>(null);
 
   useEffect(() => {
     const onScroll = () => setShowTop(window.scrollY > 400);
@@ -312,7 +339,7 @@ export default function HomePage() {
               <Reveal key={i} effect="zoom" delay={i * 100}>
                 <div
                   className="bg-surface rounded-2xl p-8 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group h-full cursor-pointer"
-                  onClick={() => setPopup({ title: s.title, content: s.detail })}
+                  onClick={() => setPopup({ title: s.title, content: s.detail, variant: "surface" })}
                 >
                   <div className="text-primary mb-4 group-hover:scale-110 transition-transform">{s.icon}</div>
                   <h3 className="text-lg font-bold text-primary">{s.title}</h3>
@@ -406,7 +433,7 @@ export default function HomePage() {
               <Reveal key={i} effect="flip" delay={i * 150}>
                 <div
                   className="bg-primary text-accent-light rounded-2xl p-8 md:p-10 flex flex-col justify-between min-h-[240px] hover:scale-[1.03] transition-transform duration-300 cursor-pointer"
-                  onClick={() => setPopup({ title: s.title, content: s.detail })}
+                  onClick={() => setPopup({ title: s.title, content: s.detail, variant: "dark" })}
                 >
                   <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center mb-6">
                     <Home className="w-5 h-5 text-accent" />
@@ -511,7 +538,7 @@ export default function HomePage() {
               <Reveal key={i} effect="fade-up" delay={i * 120}>
                 <div
                   className="relative rounded-2xl overflow-hidden group h-[320px] hover:[transform:perspective(800px)_rotateY(-5deg)] transition-all duration-500 cursor-pointer"
-                  onClick={() => setPopup({ title: item.title, content: item.detail })}
+                  onClick={() => setPopup({ title: item.title, content: item.detail, variant: "overlay" })}
                 >
                   <Image src={item.img} alt={item.title} fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/40 to-transparent" />
@@ -658,6 +685,7 @@ export default function HomePage() {
         open={!!popup}
         onClose={() => setPopup(null)}
         title={popup?.title ?? ""}
+        variant={popup?.variant ?? "surface"}
       >
         {popup?.content}
       </Modal>
