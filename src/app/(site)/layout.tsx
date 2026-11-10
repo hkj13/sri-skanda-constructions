@@ -16,11 +16,14 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
   const items = navItems();
   const whatsapp = whatsappUrl(tr(ui.whatsappGreeting));
   return (
-    // Navy drawing paper for every page, as an ordinary background (not a
-    // fixed layer), so light text always has its dark ground. Light
-    // sections bring their own. The fixed layers below paint above this
-    // and beneath the page content, in this order: dusk, video, 3D model.
-    <div className="bp-grid min-h-svh bg-primary">
+    // Navy drawing paper for every page, as an ordinary background, so
+    // light text always has its dark ground. Light sections bring their
+    // own. The drawing grid is a fixed layer on top of it, so it stays put
+    // like paper under glass, and the home story's stage lines up with it.
+    // The fixed layers below paint above the grid and beneath the page
+    // content, in this order: dusk, footage, 3D model.
+    <div className="min-h-svh bg-primary">
+      <div aria-hidden="true" className="bp-grid pointer-events-none fixed inset-0" />
       <a
         href="#content"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[80] focus:rounded-full focus:bg-accent focus:px-5 focus:py-3 focus:font-semibold focus:text-primary"
