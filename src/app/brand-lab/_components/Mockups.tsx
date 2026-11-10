@@ -1,12 +1,11 @@
 import { addressLines, site } from "@content/site";
 import { Logo, LogoUse, logoAspect } from "@/brand/Logo";
-import { LIME, NAVY, NAVY_2, getConcept, type ConceptId } from "@/brand/concepts";
+import { LIME, NAVY, NAVY_2 } from "@/brand/logo-art";
 
 const JOST = "var(--font-jost), sans-serif";
 
 /** A navy site hoarding with the reversed lockup, as painted on sheet panels. */
-export function Hoarding({ concept }: { concept: ConceptId }) {
-  const c = getConcept(concept);
+export function Hoarding() {
   const logoH = 104;
   const seams = [195, 330, 465, 600, 735, 870, 1005];
   return (
@@ -14,7 +13,7 @@ export function Hoarding({ concept }: { concept: ConceptId }) {
       viewBox="0 0 1200 430"
       className="logo-dark block h-auto w-full"
       role="img"
-      aria-label={`Concept ${c.letter} painted on a navy site hoarding`}
+      aria-label="The logo painted on a navy site hoarding"
     >
       <rect width="1200" height="430" fill="#f1f2f4" />
       {/* scaffold behind the hoarding, drawn like a blueprint */}
@@ -34,7 +33,6 @@ export function Hoarding({ concept }: { concept: ConceptId }) {
       {/* hi-vis rail */}
       <rect x="60" y="96" width="1080" height="10" fill={LIME} />
       <LogoUse
-        concept={concept}
         kind="horizontal"
         variant="dark"
         x={116}
@@ -64,21 +62,14 @@ export function Hoarding({ concept }: { concept: ConceptId }) {
 }
 
 /** A site helmet seen from the front, with the mark on the shell. */
-export function Helmet({
-  concept,
-  shell,
-}: {
-  concept: ConceptId;
-  shell: "white" | "lime";
-}) {
-  const c = getConcept(concept);
+export function Helmet({ shell }: { shell: "white" | "lime" }) {
   const fill = shell === "white" ? "#ffffff" : LIME;
   return (
     <svg
       viewBox="0 0 300 236"
       className="logo-light block h-auto w-full"
       role="img"
-      aria-label={`Concept ${c.letter} on a ${shell} site helmet`}
+      aria-label={`The mark on a ${shell} site helmet`}
     >
       <ellipse cx="150" cy="214" rx="118" ry="9" fill="#d9dce2" />
       <path
@@ -99,22 +90,20 @@ export function Helmet({
         stroke={NAVY}
         strokeWidth="3"
       />
-      <LogoUse concept={concept} kind="mark" x={117} y={82} height={66} />
+      <LogoUse kind="mark" x={114} y={76} height={72} />
     </svg>
   );
 }
 
 /** Front and back of a 90 x 50 mm business card. */
-export function BusinessCard({ concept }: { concept: ConceptId }) {
-  const c = getConcept(concept);
+export function BusinessCard() {
   const [line1, line2] = addressLines();
   return (
     <div className="mx-auto grid max-w-[920px] gap-6 sm:grid-cols-2">
       <div className="@container flex aspect-[9/5] flex-col justify-between rounded-[6px] bg-white p-[7%] shadow-[0_1px_2px_rgba(26,35,64,0.12),0_14px_30px_-12px_rgba(26,35,64,0.3)]">
         <Logo
-          concept={concept}
           kind="horizontal"
-          title={`Concept ${c.letter} on the front of a business card`}
+          title="The logo on the front of a business card"
           className="h-auto w-[58%]"
         />
         <div className="text-[3.1cqw] leading-snug text-primary">
@@ -128,12 +117,11 @@ export function BusinessCard({ concept }: { concept: ConceptId }) {
       </div>
       <div className="relative flex aspect-[9/5] items-center justify-center overflow-hidden rounded-[6px] bg-primary shadow-[0_1px_2px_rgba(26,35,64,0.12),0_14px_30px_-12px_rgba(26,35,64,0.45)]">
         <Logo
-          concept={concept}
           kind="stacked"
           variant="dark"
-          title={`Concept ${c.letter} on the back of a business card`}
+          title="The logo on the back of a business card"
           className="h-[62%] w-auto"
-          style={{ aspectRatio: logoAspect(concept, "stacked") }}
+          style={{ aspectRatio: logoAspect("stacked") }}
         />
         <span className="absolute inset-x-0 bottom-0 h-[5px] bg-accent" />
       </div>
@@ -142,19 +130,18 @@ export function BusinessCard({ concept }: { concept: ConceptId }) {
 }
 
 /** The mark inside WhatsApp's round profile picture crop. */
-export function WhatsAppAvatar({ concept }: { concept: ConceptId }) {
-  const c = getConcept(concept);
+export function WhatsAppAvatar() {
   const avatar = (size: string) => (
     <span
       className={`flex shrink-0 items-center justify-center rounded-full bg-primary ${size}`}
     >
-      <Logo concept={concept} kind="mark" variant="dark" className="h-[56%] w-[56%]" />
+      <Logo kind="mark" variant="dark" className="h-[62%] w-[62%]" />
     </span>
   );
   return (
     <div
       role="img"
-      aria-label={`Concept ${c.letter} as a WhatsApp profile picture`}
+      aria-label="The mark as a WhatsApp profile picture"
       className="flex h-full flex-col items-center justify-center gap-6"
     >
       {avatar("h-40 w-40")}

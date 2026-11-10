@@ -1,4 +1,16 @@
-import { LIME, NAVY, WHITE, type Concept, type Ink, type Shape } from "./concepts";
+import {
+  ICON_SCALE,
+  ICON_TILE,
+  LIME,
+  MARK,
+  MARK_INK,
+  MARK_SIZE,
+  NAVY,
+  WHITE,
+  WORDMARK,
+  type Ink,
+  type Shape,
+} from "./logo-art";
 import { JOST_GLYPHS, type WordmarkWeight } from "./jost-glyphs";
 
 /**
@@ -6,16 +18,15 @@ import { JOST_GLYPHS, type WordmarkWeight } from "./jost-glyphs";
  * how they sit together in the horizontal and stacked lockups.
  *
  * Pages draw these through the inline sprite in Logo.tsx. `logoSvgString`
- * flattens the same geometry into a standalone SVG file for pixel previews
- * and for export.
+ * flattens the same geometry into a standalone SVG file, used for the
+ * exported package in /public/brand.
  */
 
 export type LogoKind = "mark" | "horizontal" | "stacked" | "icon";
 export type LogoVariant = "light" | "dark" | "mono";
 
-export const MARK_SIZE = 64;
-/** Cap height of SRI SKANDA in the wordmark's own coordinate space. */
-const CAP = 24;
+/** Cap height of SRI SKANDA, in mark grid units. */
+export const CAP = 24;
 
 const round = (n: number, places = 2) => {
   const f = 10 ** places;
@@ -104,10 +115,10 @@ function setJustifiedLine(
  * SRI SKANDA over CONSTRUCTIONS. The second line is tracked out so both
  * lines share exactly the same width.
  */
-export function buildWordmark(concept: Concept): Wordmark {
-  const { primary, secondary, tracking, ratio } = concept.wordmark;
+export function buildWordmark(): Wordmark {
+  const { primary, secondary, tracking, ratio, gap } = WORDMARK;
   const subCap = CAP * ratio;
-  const gap = CAP * 0.44;
+  const lineGap = CAP * gap;
 
   const top = setLine("SRI SKANDA", primary, CAP, tracking);
   const bottom = setJustifiedLine("CONSTRUCTIONS", secondary, subCap, top.width);
@@ -125,10 +136,10 @@ export function buildWordmark(concept: Concept): Wordmark {
 
   return {
     width: round(top.width),
-    height: round(CAP + gap + subCap),
+    height: round(CAP + lineGap + subCap),
     glyphs: [
       ...place(top, CAP, "primary"),
-      ...place(bottom, CAP + gap + subCap, "secondary"),
+      ...place(bottom, CAP + lineGap + subCap, "secondary"),
     ],
   };
 }
@@ -140,12 +151,19 @@ export type Box = { x: number; y: number; width: number; height: number };
 export type LogoLayout = {
   width: number;
   height: number;
+  /** Where the 64-unit mark square is placed. */
   mark: Box;
   /** Absent for the mark and the favicon, which carry no lettering. */
   word?: Box;
 };
 
-export function layoutLogo(concept: Concept, kind: LogoKind): LogoLayout {
+/** Space between the mark and the lettering in the horizontal lockup. */
+const H_GAP = 16;
+/** Mark enlargement and spacing in the stacked lockup. */
+const STACK_SCALE = 1.75;
+const STACK_GAP = 24;
+
+export function layoutLogo(kind: LogoKind): LogoLayout {
   if (kind === "mark" || kind === "icon") {
     return {
       width: MARK_SIZE,
@@ -154,39 +172,46 @@ export function layoutLogo(concept: Concept, kind: LogoKind): LogoLayout {
     };
   }
 
-  const word = buildWordmark(concept);
+  const word = buildWordmark();
 
   if (kind === "horizontal") {
-    const gap = 18;
+    // The lockup is cropped to the artwork. The lettering hangs from the
+    // roofline of the flat-roofed block and stands on the ground line:
+    // 12 units of roof step + 24 cap + 8 gap + 12 cap = 56, the mark height.
     return {
-      width: round(MARK_SIZE + gap + word.width),
-      height: MARK_SIZE,
-      mark: { x: 0, y: 0, width: MARK_SIZE, height: MARK_SIZE },
+      width: round(MARK_INK.width + H_GAP + word.width),
+      height: MARK_INK.height,
+      mark: {
+        x: -MARK_INK.x,
+        y: -MARK_INK.y,
+        width: MARK_SIZE,
+        height: MARK_SIZE,
+      },
       word: {
-        x: MARK_SIZE + gap,
-        y: round((MARK_SIZE - word.height) / 2),
+        x: MARK_INK.width + H_GAP,
+        y: MARK_INK.height - word.height,
         width: word.width,
         height: word.height,
       },
     };
   }
 
-  // Stacked: the mark centred above the lettering, about half its width.
-  const markSize = 104;
-  const gap = 26;
-  const width = Math.max(word.width, markSize);
+  // Stacked: the mark centred above the lettering.
+  const inkW = MARK_INK.width * STACK_SCALE;
+  const inkH = MARK_INK.height * STACK_SCALE;
+  const width = Math.max(word.width, inkW);
   return {
     width: round(width),
-    height: round(markSize + gap + word.height),
+    height: round(inkH + STACK_GAP + word.height),
     mark: {
-      x: round((width - markSize) / 2),
-      y: 0,
-      width: markSize,
-      height: markSize,
+      x: round((width - inkW) / 2 - MARK_INK.x * STACK_SCALE),
+      y: round(-MARK_INK.y * STACK_SCALE),
+      width: MARK_SIZE * STACK_SCALE,
+      height: MARK_SIZE * STACK_SCALE,
     },
     word: {
       x: round((width - word.width) / 2),
-      y: markSize + gap,
+      y: round(inkH + STACK_GAP),
       width: word.width,
       height: word.height,
     },
@@ -195,25 +220,14 @@ export function layoutLogo(concept: Concept, kind: LogoKind): LogoLayout {
 
 /* ── Artwork ────────────────────────────────────────────────────────── */
 
-/** Rounded navy tile behind the favicon. */
-export const ICON_TILE =
-  "M14 0 H50 A14 14 0 0 1 64 14 V50 A14 14 0 0 1 50 64 H14 A14 14 0 0 1 0 50 V14 A14 14 0 0 1 14 0 Z";
-
-/** The mark's shapes for a variant, or the favicon artwork with its tile. */
-export function markShapes(
-  concept: Concept,
-  variant: LogoVariant | "icon",
-): Shape[] {
-  if (variant !== "icon") return concept[variant];
-  const s = concept.iconScale;
-  const offset = round((MARK_SIZE - MARK_SIZE * s) / 2);
-  const fit = `translate(${offset} ${offset}) scale(${s})`;
+/** The mark's shapes for a variant, or the favicon artwork on its tile. */
+export function markShapes(variant: LogoVariant | "icon"): Shape[] {
+  if (variant !== "icon") return MARK[variant];
+  const offset = round((MARK_SIZE - MARK_SIZE * ICON_SCALE) / 2);
+  const fit = `translate(${offset} ${offset}) scale(${ICON_SCALE})`;
   return [
     { d: ICON_TILE, ink: "navy" },
-    ...concept.icon.map((shape) => ({
-      ...shape,
-      transform: shape.transform ? `${fit} ${shape.transform}` : fit,
-    })),
+    ...MARK.dark.map((shape) => ({ ...shape, transform: fit })),
   ];
 }
 
@@ -231,42 +245,42 @@ export function inkColor(ink: Ink, current = "currentColor"): string {
 }
 
 /** Lettering colours per variant: [SRI SKANDA, CONSTRUCTIONS]. */
-function wordColors(variant: LogoVariant, current: string): [string, string] {
+export function wordColors(
+  variant: LogoVariant,
+  current = "currentColor",
+): [string, string] {
   if (variant === "dark") return [WHITE, LIME];
   if (variant === "mono") return [current, current];
   return [NAVY, NAVY];
 }
 
-export function symbolId(
-  concept: Concept,
-  part: "word" | "icon" | `mark-${LogoVariant}`,
-): string {
-  return `ssc-${concept.id}-${part}`;
+export type SymbolPart = "word" | "icon" | `mark-${LogoVariant}`;
+
+export function symbolId(part: SymbolPart): string {
+  return `ssc-logo-${part}`;
 }
 
 /* ── Standalone SVG ─────────────────────────────────────────────────── */
 
 function shapeMarkup(shape: Shape, current: string, outer?: string): string {
-  const color = inkColor(shape.ink, current);
-  const paint = shape.stroke
-    ? `fill="none" stroke="${color}" stroke-width="${shape.stroke}" stroke-miterlimit="8"`
-    : `fill="${color}"${shape.evenodd ? ' fill-rule="evenodd"' : ""}`;
+  const fill = inkColor(shape.ink, current);
   const transform = [outer, shape.transform].filter(Boolean).join(" ");
-  return `<path d="${shape.d}" ${paint}${transform ? ` transform="${transform}"` : ""}/>`;
+  return (
+    `<path d="${shape.d}" fill="${fill}"` +
+    (shape.evenodd ? ' fill-rule="evenodd"' : "") +
+    (transform ? ` transform="${transform}"` : "") +
+    "/>"
+  );
 }
 
-/**
- * A complete SVG document with fixed colours and no external references.
- * `monoColor` sets the ink for the one-colour variant.
- */
-export function logoSvgString(
-  concept: Concept,
+/** The paths of one logo arrangement, without the surrounding <svg>. */
+export function logoSvgBody(
   kind: LogoKind,
-  options: { variant?: LogoVariant; monoColor?: string; size?: number } = {},
+  options: { variant?: LogoVariant; monoColor?: string } = {},
 ): string {
-  const { variant = "light", monoColor = NAVY, size } = options;
-  const layout = layoutLogo(concept, kind);
-  const shapes = markShapes(concept, kind === "icon" ? "icon" : variant);
+  const { variant = "light", monoColor = NAVY } = options;
+  const layout = layoutLogo(kind);
+  const shapes = markShapes(kind === "icon" ? "icon" : variant);
 
   const markScale = layout.mark.width / MARK_SIZE;
   const markTransform =
@@ -276,7 +290,7 @@ export function logoSvgString(
   let body = shapes.map((s) => shapeMarkup(s, monoColor, markTransform)).join("");
 
   if (layout.word) {
-    const word = buildWordmark(concept);
+    const word = buildWordmark();
     const [primary, secondary] = wordColors(variant, monoColor);
     const offset = `translate(${layout.word.x} ${layout.word.y})`;
     body += word.glyphs
@@ -286,9 +300,34 @@ export function logoSvgString(
       )
       .join("");
   }
+  return body;
+}
 
-  const dims = size
-    ? ` width="${round((size * layout.width) / layout.height)}" height="${size}"`
-    : "";
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${layout.width} ${layout.height}"${dims}>${body}</svg>`;
+/**
+ * A complete SVG document with fixed colours and no external references.
+ * `pad` adds empty space around the artwork, in mark grid units.
+ * `monoColor` sets the ink for the one-colour variant.
+ */
+export function logoSvgString(
+  kind: LogoKind,
+  options: {
+    variant?: LogoVariant;
+    monoColor?: string;
+    size?: number;
+    pad?: number;
+    title?: string;
+  } = {},
+): string {
+  const { size, pad = 0, title } = options;
+  const layout = layoutLogo(kind);
+  const w = round(layout.width + pad * 2);
+  const h = round(layout.height + pad * 2);
+  const dims = size ? ` width="${round((size * w) / h)}" height="${size}"` : "";
+  const label = title ? ` role="img" aria-label="${title}"` : "";
+  return (
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${-pad} ${-pad} ${w} ${h}"${dims}${label}>` +
+    (title ? `<title>${title}</title>` : "") +
+    logoSvgBody(kind, options) +
+    "</svg>"
+  );
 }

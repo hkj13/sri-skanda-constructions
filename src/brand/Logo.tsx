@@ -1,6 +1,5 @@
 import type { CSSProperties } from "react";
 import {
-  MARK_SIZE,
   buildWordmark,
   inkColor,
   layoutLogo,
@@ -9,51 +8,33 @@ import {
   type LogoKind,
   type LogoVariant,
 } from "./build";
-import {
-  CONCEPTS,
-  NAVY,
-  getConcept,
-  type Concept,
-  type ConceptId,
-  type Shape,
-} from "./concepts";
+import { MARK_SIZE, NAVY, type Shape } from "./logo-art";
 
 const VARIANTS: LogoVariant[] = ["light", "dark", "mono"];
 
 function ShapePaths({ shapes }: { shapes: Shape[] }) {
   return (
     <>
-      {shapes.map((s, i) =>
-        s.stroke ? (
-          <path
-            key={i}
-            d={s.d}
-            fill="none"
-            stroke={inkColor(s.ink)}
-            strokeWidth={s.stroke}
-            strokeMiterlimit={8}
-            transform={s.transform}
-          />
-        ) : (
-          <path
-            key={i}
-            d={s.d}
-            fill={inkColor(s.ink)}
-            fillRule={s.evenodd ? "evenodd" : undefined}
-            transform={s.transform}
-          />
-        ),
-      )}
+      {shapes.map((s, i) => (
+        <path
+          key={i}
+          d={s.d}
+          fill={inkColor(s.ink)}
+          fillRule={s.evenodd ? "evenodd" : undefined}
+          transform={s.transform}
+        />
+      ))}
     </>
   );
 }
 
 /**
- * Hidden sprite holding every piece of logo artwork once. Render it a single
- * time per page; <Logo> instances then point at it with <use>, so a page can
- * show the logo many times without repeating the outlines.
+ * Hidden sprite holding the logo artwork once. Render it a single time per
+ * page (the root layout does this); every <Logo> then points at it with
+ * <use>, so the logo can appear many times without repeating its outlines.
  */
-export function LogoSprite({ concepts = CONCEPTS }: { concepts?: Concept[] }) {
+export function LogoSprite() {
+  const word = buildWordmark();
   return (
     <svg
       aria-hidden="true"
@@ -62,50 +43,40 @@ export function LogoSprite({ concepts = CONCEPTS }: { concepts?: Concept[] }) {
       height="0"
       style={{ position: "absolute", overflow: "hidden" }}
     >
-      {concepts.map((concept) => {
-        const word = buildWordmark(concept);
-        return (
-          <g key={concept.id}>
-            {VARIANTS.map((variant) => (
-              <symbol
-                key={variant}
-                id={symbolId(concept, `mark-${variant}`)}
-                viewBox={`0 0 ${MARK_SIZE} ${MARK_SIZE}`}
-              >
-                <ShapePaths shapes={markShapes(concept, variant)} />
-              </symbol>
-            ))}
-            <symbol
-              id={symbolId(concept, "icon")}
-              viewBox={`0 0 ${MARK_SIZE} ${MARK_SIZE}`}
-            >
-              <ShapePaths shapes={markShapes(concept, "icon")} />
-            </symbol>
-            {/* Lettering colours come from the .logo-* class on the <svg>.
-                Round letters overshoot the cap height slightly, so the
-                symbol must not clip at its own edges. */}
-            <symbol
-              id={symbolId(concept, "word")}
-              viewBox={`0 0 ${word.width} ${word.height}`}
-              overflow="visible"
-            >
-              {word.glyphs.map((g, i) => (
-                <path
-                  key={i}
-                  d={g.d}
-                  transform={g.transform}
-                  style={{
-                    fill:
-                      g.line === "primary"
-                        ? `var(--logo-text, ${NAVY})`
-                        : `var(--logo-sub, ${NAVY})`,
-                  }}
-                />
-              ))}
-            </symbol>
-          </g>
-        );
-      })}
+      {VARIANTS.map((variant) => (
+        <symbol
+          key={variant}
+          id={symbolId(`mark-${variant}`)}
+          viewBox={`0 0 ${MARK_SIZE} ${MARK_SIZE}`}
+        >
+          <ShapePaths shapes={markShapes(variant)} />
+        </symbol>
+      ))}
+      <symbol id={symbolId("icon")} viewBox={`0 0 ${MARK_SIZE} ${MARK_SIZE}`}>
+        <ShapePaths shapes={markShapes("icon")} />
+      </symbol>
+      {/* Lettering colours come from the .logo-* class on the <svg>.
+          Round letters overshoot the cap height slightly, so the symbol
+          must not clip at its own edges. */}
+      <symbol
+        id={symbolId("word")}
+        viewBox={`0 0 ${word.width} ${word.height}`}
+        overflow="visible"
+      >
+        {word.glyphs.map((g, i) => (
+          <path
+            key={i}
+            d={g.d}
+            transform={g.transform}
+            style={{
+              fill:
+                g.line === "primary"
+                  ? `var(--logo-text, ${NAVY})`
+                  : `var(--logo-sub, ${NAVY})`,
+            }}
+          />
+        ))}
+      </symbol>
     </svg>
   );
 }
@@ -115,14 +86,12 @@ export function LogoSprite({ concepts = CONCEPTS }: { concepts?: Concept[] }) {
  * illustrations). The parent must carry the matching .logo-* class.
  */
 export function LogoUse({
-  concept,
   kind,
   variant = "light",
   x = 0,
   y = 0,
   height,
 }: {
-  concept: ConceptId;
   kind: LogoKind;
   variant?: LogoVariant;
   x?: number;
@@ -130,10 +99,9 @@ export function LogoUse({
   /** Rendered height in the parent's units. Defaults to the natural size. */
   height?: number;
 }) {
-  const c = getConcept(concept);
-  const layout = layoutLogo(c, kind);
+  const layout = layoutLogo(kind);
   const scale = height ? height / layout.height : 1;
-  const markId = symbolId(c, kind === "icon" ? "icon" : `mark-${variant}`);
+  const markId = symbolId(kind === "icon" ? "icon" : `mark-${variant}`);
   return (
     <g
       transform={
@@ -149,7 +117,7 @@ export function LogoUse({
       />
       {layout.word ? (
         <use
-          href={`#${symbolId(c, "word")}`}
+          href={`#${symbolId("word")}`}
           x={layout.word.x}
           y={layout.word.y}
           width={layout.word.width}
@@ -160,13 +128,19 @@ export function LogoUse({
   );
 }
 
-export function logoAspect(concept: ConceptId, kind: LogoKind): number {
-  const { width, height } = layoutLogo(getConcept(concept), kind);
+/** Width divided by height, for sizing a logo by one dimension in CSS. */
+export function logoAspect(kind: LogoKind): number {
+  const { width, height } = layoutLogo(kind);
   return width / height;
 }
 
 type LogoProps = {
-  concept: ConceptId;
+  /**
+   * horizontal: mark beside the name (default).
+   * stacked:    mark above the name.
+   * mark:       the mark alone, in its square.
+   * icon:       the favicon: mark on a rounded navy tile.
+   */
   kind?: LogoKind;
   /**
    * light: for white and lime grounds (default).
@@ -181,14 +155,13 @@ type LogoProps = {
 };
 
 export function Logo({
-  concept,
   kind = "horizontal",
   variant = "light",
   title,
   className,
   style,
 }: LogoProps) {
-  const { width, height } = layoutLogo(getConcept(concept), kind);
+  const { width, height } = layoutLogo(kind);
   return (
     <svg
       viewBox={`0 0 ${width} ${height}`}
@@ -199,7 +172,7 @@ export function Logo({
       aria-hidden={title ? undefined : true}
       focusable="false"
     >
-      <LogoUse concept={concept} kind={kind} variant={variant} />
+      <LogoUse kind={kind} variant={variant} />
     </svg>
   );
 }
