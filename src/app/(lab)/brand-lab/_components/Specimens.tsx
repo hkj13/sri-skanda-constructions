@@ -17,7 +17,7 @@ export function SpecLabel({ children, note }: { children: ReactNode; note?: stri
         className="relative h-px min-w-8 flex-1 bg-primary/25 before:absolute before:left-0 before:top-[-4px] before:h-[9px] before:w-px before:bg-primary/40 after:absolute after:right-0 after:top-[-4px] after:h-[9px] after:w-px after:bg-primary/40"
       />
       {note ? (
-        <p className="basis-full text-[13px] text-neutral-600 sm:basis-auto">
+        <p className="basis-full text-[13px] text-gray-600 sm:basis-auto">
           {note}
         </p>
       ) : null}
@@ -38,7 +38,7 @@ export function Panel({
     white: "bg-white ring-1 ring-inset ring-primary/10",
     navy: "bg-primary",
     lime: "bg-accent",
-    paper: "bg-neutral-100",
+    paper: "bg-gray-100",
   };
   return (
     <div className={`rounded-lg ${tones[tone]} ${className}`}>{children}</div>
@@ -157,11 +157,11 @@ function MockNav({ dark }: { dark?: boolean }) {
 function BrowserTab({ dark }: { dark?: boolean }) {
   return (
     <div
-      className={`flex items-end rounded-lg px-3 pt-3 ${dark ? "bg-neutral-900" : "bg-neutral-200"}`}
+      className={`flex items-end rounded-lg px-3 pt-3 ${dark ? "bg-gray-900" : "bg-gray-200"}`}
     >
       <div
         className={`flex w-64 max-w-full items-center gap-2 rounded-t-lg px-3 py-2.5 ${
-          dark ? "bg-neutral-700 text-white" : "bg-white text-neutral-800"
+          dark ? "bg-gray-700 text-white" : "bg-white text-gray-800"
         }`}
       >
         <Logo
@@ -234,21 +234,21 @@ export function Specimens() {
           <Panel tone="paper" className="flex items-center justify-around gap-4 p-5">
             <figure className="text-center">
               <PixelPreview svg={iconSvg(16)} pixels={16} zoom={7} label="Favicon at 16 pixels, enlarged" />
-              <figcaption className="mt-2 text-[13px] text-neutral-600">Favicon, 16 px</figcaption>
+              <figcaption className="mt-2 text-[13px] text-gray-600">Favicon, 16 px</figcaption>
             </figure>
             <figure className="text-center">
               <PixelPreview svg={iconSvg(32)} pixels={32} zoom={3.5} label="Favicon at 32 pixels, enlarged" />
-              <figcaption className="mt-2 text-[13px] text-neutral-600">Favicon, 32 px</figcaption>
+              <figcaption className="mt-2 text-[13px] text-gray-600">Favicon, 32 px</figcaption>
             </figure>
           </Panel>
           <Panel tone="white" className="flex items-center justify-around gap-4 p-5">
             <figure className="text-center">
               <PixelPreview svg={markSvg(16)} pixels={16} zoom={7} label="Mark alone at 16 pixels, enlarged" />
-              <figcaption className="mt-2 text-[13px] text-neutral-600">Mark alone, 16 px</figcaption>
+              <figcaption className="mt-2 text-[13px] text-gray-600">Mark alone, 16 px</figcaption>
             </figure>
             <figure className="text-center">
               <PixelPreview svg={markSvg(32)} pixels={32} zoom={3.5} label="Mark alone at 32 pixels, enlarged" />
-              <figcaption className="mt-2 text-[13px] text-neutral-600">Mark alone, 32 px</figcaption>
+              <figcaption className="mt-2 text-[13px] text-gray-600">Mark alone, 32 px</figcaption>
             </figure>
           </Panel>
           <Panel tone="white" className="flex items-end justify-around gap-3 p-5">
@@ -260,7 +260,7 @@ export function Specimens() {
                   style={{ width: px, height: px }}
                   className="mx-auto"
                 />
-                <figcaption className="mt-2 text-[13px] text-neutral-600">{px}</figcaption>
+                <figcaption className="mt-2 text-[13px] text-gray-600">{px}</figcaption>
               </figure>
             ))}
           </Panel>

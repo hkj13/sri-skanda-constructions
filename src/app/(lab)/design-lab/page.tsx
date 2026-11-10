@@ -275,7 +275,7 @@ export default function DesignLabPage() {
                     <div className="h-20" style={{ background: c.value }} />
                     <div className="p-4">
                       <p className="font-medium text-primary">
-                        {c.name} <Mono className="text-[13px] text-neutral-600">{c.value}</Mono>
+                        {c.name} <Mono className="text-[13px] text-gray-600">{c.value}</Mono>
                       </p>
                       <p className="mt-1 text-[14px] leading-snug text-primary/80">{c.role}</p>
                     </div>
@@ -356,12 +356,12 @@ export default function DesignLabPage() {
               <li key={t.name} className="grid items-baseline gap-4 p-5 md:grid-cols-[180px_1fr]">
                 <div>
                   <p className="font-medium text-primary">{t.name}</p>
-                  <p className="text-[14px] text-neutral-600">
+                  <p className="text-[14px] text-gray-600">
                     <Mono>
                       {t.min}–{t.max} px · {t.weight}
                     </Mono>
                   </p>
-                  <p className="text-[14px] text-neutral-600">{t.use}</p>
+                  <p className="text-[14px] text-gray-600">{t.use}</p>
                 </div>
                 <p
                   className="min-w-0 break-words text-primary"

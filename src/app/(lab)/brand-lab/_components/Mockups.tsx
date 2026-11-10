@@ -149,7 +149,7 @@ export function WhatsAppAvatar() {
         {avatar("h-12 w-12")}
         <div className="min-w-0 flex-1">
           <p className="truncate text-[15px] font-medium text-primary">{site.name}</p>
-          <p className="truncate text-[13px] text-neutral-600">
+          <p className="truncate text-[13px] text-gray-600">
             Tell us about your plot
           </p>
         </div>

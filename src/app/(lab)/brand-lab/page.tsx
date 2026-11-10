@@ -230,7 +230,7 @@ export default function BrandLabPage() {
             Files
           </h2>
           <p className="mt-4 max-w-3xl text-lg leading-relaxed text-primary/85">
-            Everything lives in <code className="rounded bg-neutral-100 px-1.5 py-0.5 text-[0.9em]">public/brand</code>.
+            Everything lives in <code className="rounded bg-gray-100 px-1.5 py-0.5 text-[0.9em]">public/brand</code>.
             Use SVG wherever you can: it stays sharp at any size. All lettering
             is outlined, so no file needs a font installed.
           </p>
@@ -249,7 +249,7 @@ export default function BrandLabPage() {
                         className="flex items-baseline justify-between gap-4 py-3 text-[15px] text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                       >
                         <span>{item.label}</span>
-                        <span className="text-[12px] font-semibold tracking-[0.14em] text-neutral-600">
+                        <span className="text-[12px] font-semibold tracking-[0.14em] text-gray-600">
                           {item.note}
                         </span>
                       </a>
