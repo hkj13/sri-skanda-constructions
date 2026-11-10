@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { story, subscribe } from "@/scene/store";
 
@@ -166,10 +167,10 @@ export function SceneVideo({ name, className = "", style }: { name: string; clas
   );
 }
 
-/* ── Dusk ───────────────────────────────────────────────────────────── */
+/* ── Layers under the 3D model ──────────────────────────────────────── */
 
 /** Darkens the paper while the handover chapter is on screen. */
-export function DuskLayer({ target }: { target: string }) {
+function DuskLayer({ target }: { target: string }) {
   const [on, setOn] = useState(false);
   useEffect(() => {
     const el = document.getElementById(target);
@@ -183,36 +184,53 @@ export function DuskLayer({ target }: { target: string }) {
   return (
     <div
       aria-hidden="true"
-      className={`pointer-events-none fixed inset-0 -z-[9] bg-navy-950 transition-opacity duration-700 motion-reduce:transition-none ${on ? "opacity-100" : "opacity-0"}`}
+      className={`pointer-events-none fixed inset-0 bg-navy-950 transition-opacity duration-700 motion-reduce:transition-none ${on ? "opacity-100" : "opacity-0"}`}
     />
   );
 }
 
-/* ── Backdrop video ─────────────────────────────────────────────────── */
-
 /**
  * A video layer for chapters that use the 3D model. It sits behind the
- * model (and behind the drawing on other devices), fixed to the right-hand
- * side of the screen, and is shown only while its chapter is in view.
+ * model, fixed to the right-hand side of the screen, exists only on pages
+ * that have its chapter, and fades in while that chapter is in view.
  */
-export function BackdropVideo({ target, name }: { target: string; name: string }) {
+function BackdropVideo({ target, name }: { target: string; name: string }) {
+  const [present, setPresent] = useState(false);
   const [on, setOn] = useState(false);
   useEffect(() => {
     const el = document.getElementById(target);
     if (!el) return;
-    const io = new IntersectionObserver(([entry]) => setOn(entry.isIntersecting), {
-      rootMargin: "-35% 0px -35% 0px",
-    });
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        setPresent(true);
+        setOn(entry.isIntersecting);
+      },
+      { rootMargin: "-35% 0px -35% 0px" },
+    );
     io.observe(el);
     return () => io.disconnect();
   }, [target]);
+  if (!present) return null;
   return (
     <div
       aria-hidden="true"
-      className={`pointer-events-none fixed inset-y-0 right-0 -z-[8] hidden w-[62vw] transition-opacity duration-700 lg:block ${on ? "opacity-100" : "opacity-0"}`}
+      className={`pointer-events-none fixed inset-y-0 right-0 hidden w-[62vw] transition-opacity duration-700 lg:block ${on ? "opacity-100" : "opacity-0"}`}
       style={{ maskImage: "radial-gradient(ellipse 55% 55% at 55% 42%, #000 20%, transparent 75%)" }}
     >
       <SceneVideo name={name} className="inset-0" />
+    </div>
+  );
+}
+
+/** The fixed layers that sit between the navy paper and the 3D model. */
+export function UnderLayers() {
+  const pathname = usePathname();
+  // Keyed by page, so every layer starts fresh after a navigation.
+  return (
+    <div key={pathname} className="contents">
+      <DuskLayer target="handover" />
+      <BackdropVideo target="structure" name="iron-worker" />
+      <BackdropVideo target="start" name="building-landscape" />
     </div>
   );
 }

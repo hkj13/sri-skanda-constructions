@@ -62,7 +62,13 @@ function Facade({ old }: { old: boolean }) {
  * Before and after slider. The handle is a real range input, so it works
  * with a mouse, a finger, or the arrow keys.
  */
-export function BeforeAfter() {
+export function BeforeAfter({
+  photos: given,
+  className = "absolute inset-x-[4%] inset-y-[9%] z-[1] overflow-hidden lg:left-0 lg:right-[10%]",
+}: {
+  photos?: { before: string; after: string };
+  className?: string;
+} = {}) {
   const [pos, setPos] = useState(55);
   const wrap = useRef<HTMLDivElement>(null);
   const touched = useRef(false);
@@ -84,11 +90,11 @@ export function BeforeAfter() {
     return () => io.disconnect();
   }, []);
 
-  const photos = renovation.photos;
+  const photos = given ?? renovation.photos;
   return (
     <div
       ref={wrap}
-      className="absolute inset-x-[4%] inset-y-[9%] z-[1] overflow-hidden lg:left-0 lg:right-[10%]"
+      className={className}
       style={{ "--pos": `${pos}%` } as React.CSSProperties}
     >
       <div className="absolute inset-0">

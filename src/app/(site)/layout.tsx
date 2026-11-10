@@ -3,6 +3,7 @@ import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
 import { SiteMotion } from "@/components/site/SiteMotion";
 import { WhatsAppFab } from "@/components/site/WhatsAppFab";
+import { UnderLayers } from "@/home/client";
 import { navItems } from "@/lib/nav";
 import { businessJsonLd, ldScript } from "@/lib/seo";
 import { telLink } from "@/lib/whatsapp";
@@ -15,16 +16,17 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
   const items = navItems();
   const whatsapp = whatsappUrl(tr(ui.whatsappGreeting));
   return (
-    <>
+    // Navy drawing paper for every page, as an ordinary background (not a
+    // fixed layer), so light text always has its dark ground. Light
+    // sections bring their own. The fixed layers below paint above this
+    // and beneath the page content, in this order: dusk, video, 3D model.
+    <div className="bp-grid min-h-svh bg-primary">
       <a
         href="#content"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[80] focus:rounded-full focus:bg-accent focus:px-5 focus:py-3 focus:font-semibold focus:text-primary"
       >
         {tr(ui.skipToContent)}
       </a>
-      {/* Navy drawing paper behind every page. Sections that need a light
-          ground bring their own; the 3D canvas sits between this and them. */}
-      <div aria-hidden="true" className="bp-grid fixed inset-0 -z-10 bg-primary" />
       <SiteMotion />
       <Header
         items={items}
@@ -41,6 +43,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         phone={site.phone.display}
         siteName={site.name}
       />
+      <UnderLayers />
       {/* The building model: one canvas that stays mounted across pages. */}
       <SceneHost />
       <main id="content" tabIndex={-1} className="relative outline-none">
@@ -53,6 +56,6 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: ldScript(businessJsonLd()) }}
       />
-    </>
+    </div>
   );
 }

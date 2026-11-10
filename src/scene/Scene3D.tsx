@@ -484,7 +484,9 @@ function Rig() {
     }
 
     // Dusk for the handover, evening for the finished building.
-    const dusk = g >= 10 ? 0.75 : smooth(span(g, 7.9, 8.2)) * (1 - smooth(span(g, 9, 9.4)));
+    const dusk = !view.home
+      ? g >= 8 ? 0.35 : 0
+      : g >= 10 ? 0.75 : smooth(span(g, 7.9, 8.2)) * (1 - smooth(span(g, 9, 9.4)));
     if (key.current) key.current.intensity = lerp(1.9, 0.4, dusk);
     if (fill.current) fill.current.intensity = lerp(1.95, 0.7, dusk);
     if (side.current) side.current.intensity = lerp(0.75, 0.12, dusk);
@@ -614,7 +616,7 @@ export default function Scene3D({ force, onGiveUp }: { force: boolean; onGiveUp:
       <Canvas
         frameloop={running ? "always" : "never"}
         dpr={dpr}
-        shadows
+        shadows="percentage"
         flat
         gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
         camera={{ fov: 27, near: 1, far: 400, position: [40, 20, 40] }}

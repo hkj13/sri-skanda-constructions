@@ -15,9 +15,9 @@ import {
 } from "@content/vastu";
 import { ChapterText, SCENE_SVG, Stage, Tag } from "./parts";
 
-const X0 = 175;
-const Y0 = 150;
-const S = 450;
+const X0 = 110;
+const Y0 = 120;
+const S = 540;
 const CELL = S / 3;
 const ZONES = ["NW", "N", "NE", "W", "", "E", "SW", "S", "SE"];
 const ROOM_IDS = Object.keys(ROOMS) as RoomId[];
@@ -117,14 +117,14 @@ export function VastuChapter({ copy }: { copy: ChapterCopy }) {
                 x={CELL / 2}
                 y={CELL / 2 - 2}
                 textAnchor="middle"
-                fontSize={19}
+                fontSize={24}
                 fontWeight={500}
                 fill={C.navy}
                 style={{ fontFamily: "var(--font-jost), sans-serif" }}
               >
                 {tr(ROOMS[id].short)}
               </text>
-              <Tag x={CELL / 2} y={CELL / 2 + 22} anchor="middle" fill={C.navy} size={12}>
+              <Tag x={CELL / 2} y={CELL / 2 + 26} anchor="middle" fill={C.navy} size={14}>
                 {zone}
               </Tag>
             </g>
@@ -155,14 +155,14 @@ export function VastuChapter({ copy }: { copy: ChapterCopy }) {
       </g>
 
       {/* compass, spinning to north */}
-      <g transform="translate(700 96)">
-        <circle r={44} fill="none" stroke={C.navy300} strokeWidth={1} />
-        <path d="M-44 0h10M34 0h10M0 34v10" stroke={C.navy300} strokeWidth={1} />
+      <g transform="translate(728 70)">
+        <circle r={40} fill="none" stroke={C.navy300} strokeWidth={1} />
+        <path d="M-40 0h8M32 0h8M0 32v8" stroke={C.navy300} strokeWidth={1} />
         <g className="sc-spin" style={sc(0.08, 0.46)}>
           <path d="M0 -36L11 8L0 0L-11 8Z" fill={C.lime} />
           <path d="M0 36L7 8L0 14L-7 8Z" fill={C.navy300} />
         </g>
-        <Tag x={0} y={-54} anchor="middle" fill={C.lime}>
+        <Tag x={-54} y={5} anchor="middle" fill={C.lime}>
           N
         </Tag>
       </g>

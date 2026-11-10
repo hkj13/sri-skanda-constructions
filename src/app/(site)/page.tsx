@@ -1,7 +1,7 @@
 import { ButtonLink, WhatsAppButton } from "@/components/ui/Button";
 import { BeforeAfter } from "@/home/BeforeAfter";
 import { Chapter } from "@/home/Chapter";
-import { BackdropVideo, ChapterRail, DuskLayer, FloorCounter, SceneVideo } from "@/home/client";
+import { ChapterRail, FloorCounter, SceneVideo } from "@/home/client";
 import { ChapterText, SCENE_SVG, Stage } from "@/home/parts";
 import { PlanningChapter } from "@/home/PlanningChapter";
 import { FinishingScene, FoundationScene, GroundScene, KeyAndHand, SustainableScene } from "@/home/scenes";
@@ -36,9 +36,6 @@ export default function HomePage() {
 
   return (
     <div className="relative text-white">
-      <DuskLayer target="handover" />
-      <BackdropVideo target="structure" name="iron-worker" />
-      <BackdropVideo target="start" name="building-landscape" />
       <ChapterRail
         label={tr(ui.nav.chapters)}
         chapters={chapters.map((ch) => ({ id: ch.id, name: tr(ch.nav), sheet: ch.sheet }))}
