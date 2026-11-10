@@ -50,6 +50,10 @@ html {
 /* ── Logo lettering colours ──
    The logo artwork lives once in an SVG sprite. These classes, set on each
    <svg> by the Logo component, colour the lettering for the ground it is on. */
+.logo-light {
+  --logo-text: var(--primary);
+  --logo-sub: var(--primary);
+}
 .logo-dark {
   --logo-text: #ffffff;
   --logo-sub: var(--accent);
