@@ -81,10 +81,13 @@ export function LogoSprite({ concepts = CONCEPTS }: { concepts?: Concept[] }) {
             >
               <ShapePaths shapes={markShapes(concept, "icon")} />
             </symbol>
-            {/* Lettering colours come from the .logo-* class on the <svg>. */}
+            {/* Lettering colours come from the .logo-* class on the <svg>.
+                Round letters overshoot the cap height slightly, so the
+                symbol must not clip at its own edges. */}
             <symbol
               id={symbolId(concept, "word")}
               viewBox={`0 0 ${word.width} ${word.height}`}
+              overflow="visible"
             >
               {word.glyphs.map((g, i) => (
                 <path
@@ -190,7 +193,7 @@ export function Logo({
     <svg
       viewBox={`0 0 ${width} ${height}`}
       className={[`logo-${variant}`, className].filter(Boolean).join(" ")}
-      style={style}
+      style={{ overflow: "visible", ...style }}
       role={title ? "img" : undefined}
       aria-label={title}
       aria-hidden={title ? undefined : true}
