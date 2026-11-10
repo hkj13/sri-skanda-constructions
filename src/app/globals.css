@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* ── Brand colours (unchanged) and their derived tints ──
+   Everything beyond the six brand colours is a tint or shade of the navy
+   hue, or a gray built on it. See src/design/tokens.ts for roles and the
+   contrast table. */
 :root {
   --background: #ffffff;
   --foreground: #1a2340;
@@ -8,6 +12,17 @@
   --accent: #d8f060;
   --accent-light: #e8f5a0;
   --surface: #eef8c4;
+
+  --margin: clamp(16px, 4.5vw, 128px);
+  --gutter: clamp(16px, 1.6vw, 40px);
+  --header-h: 72px;
+  --laser-h: 3px;
+
+  --ease-settle: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-drop: cubic-bezier(0.55, 0, 1, 0.45);
+  --ease-snap: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-pour: cubic-bezier(0.45, 0, 0.55, 1);
+  --ease-sweep: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 @theme inline {
@@ -18,33 +33,248 @@
   --color-accent: var(--accent);
   --color-accent-light: var(--accent-light);
   --color-surface: var(--surface);
+
+  --color-navy-950: #12182b;
+  --color-navy-700: #2f3f74;
+  --color-navy-300: #a4b1da;
+  --color-navy-100: #e9ecf6;
+  --color-navy-50: #f4f6fb;
+
+  --color-gray-50: #f7f7f8;
+  --color-gray-100: #eeeff1;
+  --color-gray-200: #dddfe3;
+  --color-gray-300: #c1c4cd;
+  --color-gray-400: #9499a8;
+  --color-gray-500: #6e7487;
+  --color-gray-600: #5c6170;
+  --color-gray-700: #494d5a;
+  --color-gray-800: #373a43;
+  --color-gray-900: #25272d;
+
+  /* WhatsApp actions only, always with navy text. */
+  --color-whatsapp: #25d366;
+
   --font-sans: var(--font-jost);
+  --font-mono: var(--font-dm-mono);
+
+  --ease-settle: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-sweep: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + 16px);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-size: clamp(1.0625rem, 1.042rem + 0.091vw, 1.1875rem);
+  line-height: 1.65;
 }
 
-html {
-  scroll-behavior: smooth;
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
 }
 
-/* ── Scroll reveal animations ── */
-.reveal {
-  opacity: 0;
-  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+::selection {
+  background: var(--accent);
+  color: var(--primary);
 }
-.reveal.reveal-fade-up    { transform: translateY(48px); }
-.reveal.reveal-fade-left   { transform: translateX(-48px); }
-.reveal.reveal-fade-right  { transform: translateX(48px); }
-.reveal.reveal-zoom        { transform: scale(0.9); }
-.reveal.reveal-flip        { transform: perspective(600px) rotateY(15deg); }
 
-.reveal.revealed {
-  opacity: 1 !important;
-  transform: none !important;
+/* ── Type scale: fluid from a 360 px phone to a 2560 px screen ── */
+@utility t-display {
+  font-size: clamp(2.75rem, 1.523rem + 5.455vw, 10.5rem);
+  font-weight: 300;
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+}
+@utility t-h1 {
+  font-size: clamp(2.5rem, 1.764rem + 3.273vw, 7rem);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+@utility t-h2 {
+  font-size: clamp(2rem, 1.591rem + 1.818vw, 4.5rem);
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+}
+@utility t-h3 {
+  font-size: clamp(1.375rem, 1.232rem + 0.636vw, 2.25rem);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+}
+@utility t-lead {
+  font-size: clamp(1.125rem, 1.043rem + 0.364vw, 1.625rem);
+  line-height: 1.5;
+}
+@utility t-small {
+  font-size: clamp(0.9375rem, 0.927rem + 0.045vw, 1rem);
+  line-height: 1.55;
+}
+@utility t-eyebrow {
+  font-size: clamp(0.75rem, 0.73rem + 0.091vw, 0.875rem);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+@utility t-tech {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: clamp(0.75rem, 0.73rem + 0.091vw, 0.875rem);
+  line-height: 1.3;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ── Layout ── */
+@utility shell {
+  width: 100%;
+  padding-inline: var(--margin);
+}
+@utility grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+}
+@utility measure {
+  max-width: 68ch;
+}
+
+/* Faint navy-on-navy drawing grid. */
+@utility bp-grid {
+  background-image:
+    linear-gradient(var(--secondary) 1px, transparent 1px),
+    linear-gradient(90deg, var(--secondary) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* ── Scroll-driven drawing ──
+   A chapter sets --p (0 to 1) as it scrolls. Any element with .sc and its
+   own --t0 / --t1 fades and settles in between those two points.
+   Without JavaScript, or with reduced motion, --p stays at 1: every
+   drawing shows its finished state. */
+.chapter {
+  --p: 1;
+}
+/* The opening chapter is finished at the start and changes as it leaves. */
+.chapter-first {
+  --p: 0;
+}
+.sc,
+.sc-draw,
+.sc-rise,
+.sc-fall,
+.sc-wipe,
+.sc-spin,
+.sc-grow,
+.sc-sweep {
+  --k: clamp(0, calc((var(--p) - var(--t0, 0)) / (var(--t1, 1) - var(--t0, 0))), 1);
+  --e: calc(var(--k) * var(--k) * (3 - 2 * var(--k)));
+}
+/* Fades in while settling from an offset. */
+.sc {
+  opacity: var(--e);
+  transform: translate(
+    calc((1 - var(--e)) * var(--dx, 0px)),
+    calc((1 - var(--e)) * var(--dy, 0px))
+  );
+}
+/* Draws a stroke from nothing to its full length (needs pathLength="1"). */
+.sc-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--k));
+}
+/* Grows up from its bottom edge, like a wall or a pour. */
+.sc-rise {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transform: scaleY(var(--k));
+}
+/* Grows down from its top edge, like a trench being dug. */
+.sc-fall {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  transform: scaleY(var(--k));
+}
+/* Wipes in from the left. */
+.sc-wipe {
+  transform-box: fill-box;
+  transform-origin: 0 50%;
+  transform: scaleX(var(--k));
+}
+/* Spins into place. */
+.sc-spin {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  transform: rotate(calc((1 - var(--e)) * var(--turn, -200deg)));
+}
+/* Grows from its base, like planting. */
+.sc-grow {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transform: scale(var(--e));
+}
+/* A leading edge that travels across and is gone on arrival. */
+.sc-sweep {
+  transform: translateX(calc(var(--k) * var(--travel, 100px)));
+  opacity: calc((1 - var(--k)) * 30 * var(--k) * 30);
+}
+
+/* Scene box: a 10:9 frame that fits its column, so layers placed in
+   percentages line up exactly with the drawing's coordinates. */
+.scene-box {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 10 / 9;
+}
+@media (min-width: 1024px) {
+  .scene-fit {
+    container-type: size;
+  }
+  .scene-box {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: min(100cqw, 100cqh * 10 / 9);
+    height: min(100cqh, 100cqw * 9 / 10);
+    aspect-ratio: auto;
+    transform: translate(-50%, -50%);
+  }
+}
+/* Short desktop screens: keep the text column inside one screen. */
+@media (min-width: 1024px) and (max-height: 820px) {
+  .chapter .t-lead {
+    font-size: 1.0625rem;
+  }
+  .chapter .t-h2 {
+    font-size: 2.6rem;
+  }
+}
+
+/* Where the 3D model is running it replaces the drawing in its slot. */
+@media (min-width: 1024px) {
+  html[data-scene3d="on"] [data-scene-fallback] {
+    visibility: hidden;
+  }
+}
+
+/* The crane's load: the Structure heading, lowered into place by scroll. */
+@media (min-width: 1024px) {
+  .crane-load {
+    --k: clamp(0, calc((var(--p) - 0.06) / 0.42), 1);
+    --e: calc(var(--k) * var(--k) * (3 - 2 * var(--k)));
+    transform: translateY(calc((1 - var(--e)) * -62svh));
+  }
+  .crane-cable {
+    --k: clamp(0, calc((var(--p) - 0.56) / 0.12), 1);
+    opacity: calc(1 - var(--k));
+  }
 }
 
 /* ── Logo lettering colours ──
@@ -61,4 +291,123 @@ html {
 .logo-mono {
   --logo-text: currentColor;
   --logo-sub: currentColor;
+}
+
+/* ── Groundbreaking: plays once on load, pure CSS ── */
+@keyframes stake-drop {
+  0% { transform: translateY(-140px); opacity: 0; }
+  12% { opacity: 1; }
+  70% { transform: translateY(0); }
+  82% { transform: translateY(-5px); }
+  100% { transform: translateY(0); opacity: 1; }
+}
+@keyframes line-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes string-snap {
+  0% { stroke-dashoffset: 1; transform: translateY(0); }
+  70% { stroke-dashoffset: 0; transform: translateY(0); }
+  80% { transform: translateY(-2.5px); }
+  90% { transform: translateY(1.5px); }
+  100% { stroke-dashoffset: 0; transform: translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes dawn {
+  from { opacity: 0.15; transform: scaleX(0.4); }
+  to { opacity: 1; transform: scaleX(1); }
+}
+
+.gb-stake { animation: stake-drop 0.7s var(--ease-drop) both; animation-delay: calc(0.35s + var(--i, 0) * 0.14s); }
+.gb-string { stroke-dasharray: 1; animation: string-snap 0.6s var(--ease-settle) both; animation-delay: calc(1s + var(--i, 0) * 0.12s); }
+.gb-draw { stroke-dasharray: 1; animation: line-draw 1.4s var(--ease-pour) both; animation-delay: var(--d, 1.5s); }
+.gb-fill { animation: fade-in 0.7s ease-out both; animation-delay: var(--d, 2.8s); }
+.gb-tag { animation: fade-in 0.4s ease-out both; animation-delay: calc(0.9s + var(--i, 0) * 0.14s); }
+.gb-dawn { transform-box: fill-box; transform-origin: 50% 100%; animation: dawn 2.4s var(--ease-settle) both; }
+
+/* ── Laser line ──
+   A navy track with a lime fill, so the lime never sits on white. It is the
+   scroll progress bar, and on a page change it sweeps down the screen while
+   the new page is revealed behind it. */
+.laser {
+  view-transition-name: laser;
+}
+.laser-fill {
+  transform: scaleX(var(--laser, 0));
+}
+html[data-nav] .laser-fill {
+  transform: scaleX(1);
+}
+.site-header {
+  view-transition-name: site-header;
+}
+
+@keyframes laser-sweep {
+  from { transform: translateY(0); }
+  to { transform: translateY(100vh); }
+}
+@keyframes page-build {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+::view-transition-old(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-new(root) {
+  animation: page-build 0.9s var(--ease-sweep) both;
+  mix-blend-mode: normal;
+}
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 90;
+}
+::view-transition-old(site-header) {
+  display: none;
+}
+::view-transition-new(site-header) {
+  animation: none;
+}
+::view-transition-group(laser) {
+  animation: laser-sweep 0.9s var(--ease-sweep) both;
+  z-index: 100;
+}
+::view-transition-old(laser) {
+  animation: none;
+  opacity: 1;
+}
+::view-transition-new(laser) {
+  animation: none;
+  opacity: 0;
+}
+
+/* ── Reduced motion: finished states, short fades, nothing sliding ── */
+@media (prefers-reduced-motion: reduce) {
+  .gb-stake,
+  .gb-string,
+  .gb-draw,
+  .gb-fill,
+  .gb-tag,
+  .gb-dawn {
+    animation: none;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0.2s !important;
+    animation-name: fade-in !important;
+  }
+  ::view-transition-old(*) {
+    animation: none !important;
+  }
+  * {
+    scroll-behavior: auto !important;
+  }
 }
