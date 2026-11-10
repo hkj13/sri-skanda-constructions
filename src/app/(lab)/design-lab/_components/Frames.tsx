@@ -345,7 +345,7 @@ export function F0Groundbreaking() {
       </g>
       <Header />
       <Laser p={0.02} />
-      <Eyebrow y={44}>SARAM, PONDICHERRY</Eyebrow>
+      <Eyebrow y={44}>BUILDERS IN PONDICHERRY</Eyebrow>
       <Headline y={62} lines={["From the first stake", "to the house key."]} size={15} />
       <Bars y={88} widths={[118, 96]} />
       <Pill x={16} y={104} w={92} label="Plan your build on WhatsApp" kind="whatsapp" />
@@ -760,7 +760,7 @@ export function F10Start() {
       <Pill x={16} y={84} w={100} label="Plan your build on WhatsApp" kind="whatsapp" />
       <Pill x={16} y={98} w={100} label="Get a free estimate" kind="lime" />
       <Pill x={16} y={112} w={100} label="Call +91 94880 84277" kind="outline" />
-      <Tag x={16} y={136}>51, 3RD CROSS ST, SARAM, PONDICHERRY</Tag>
+      <Tag x={16} y={136}>51, 3RD CROSS ST, PONDICHERRY</Tag>
       <Rail active={10} />
     </Frame>
   );
@@ -916,7 +916,7 @@ export function M0Groundbreaking() {
       <Grid w={180} h={320} />
       <Header w={180} compact />
       <Laser p={0.02} w={180} />
-      <Eyebrow x={14} y={40}>SARAM, PONDICHERRY</Eyebrow>
+      <Eyebrow x={14} y={40}>BUILDERS IN PONDICHERRY</Eyebrow>
       <Headline x={14} y={60} lines={["From the first", "stake to the", "house key."]} size={16} />
       <Bars x={14} y={104} widths={[150, 132, 90]} />
       <Pill x={14} y={124} w={152} h={16} label="Plan your build on WhatsApp" kind="whatsapp" />

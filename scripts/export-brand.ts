@@ -312,7 +312,7 @@ function ogSvg(title: string[] | null): string {
         tracking: 0.18,
         fill: LIME,
       }) +
-      text("Saram, Pondicherry", 1120, 540, {
+      text("Pondicherry, India", 1120, 540, {
         size: 24,
         fill: WHITE,
         anchor: "end",
@@ -349,7 +349,7 @@ const SHARE_PAGES: { file: string; title: string }[] = [
   { file: "process", title: "How a building gets built, stage by stage." },
   { file: "estimate", title: "Get a free construction estimate." },
   { file: "contact", title: "Plan your build with us." },
-  { file: "about", title: "A builder from Saram, Pondicherry." },
+  { file: "about", title: "A builder from Pondicherry." },
   ...services.map((s) => ({ file: `service-${s.slug}`, title: `${tr(s.title)}.` })),
 ];
 

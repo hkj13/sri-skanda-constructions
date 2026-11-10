@@ -65,7 +65,7 @@ export function businessJsonLd() {
     ...(site.email ? { email: site.email } : {}),
     address: {
       "@type": "PostalAddress",
-      streetAddress: `${a.street}, ${a.area}, ${a.locality}`,
+      streetAddress: [a.street, a.area, a.locality].filter(Boolean).join(", "),
       addressLocality: a.city,
       addressRegion: "Puducherry",
       postalCode: a.postalCode,

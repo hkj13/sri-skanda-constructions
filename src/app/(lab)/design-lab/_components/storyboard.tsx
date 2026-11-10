@@ -34,7 +34,7 @@ export const CHAPTERS: Chapter[] = [
     sheet: "00",
     title: "Groundbreaking",
     frame: F0Groundbreaking,
-    learns: "A builder in Saram, Pondicherry, for homes and commercial buildings, and one tap to reach them on WhatsApp.",
+    learns: "A builder in Pondicherry, for homes and commercial buildings, and one tap to reach them on WhatsApp.",
     scroll:
       "First paint is already the finished frame: plot, stakes, logo and headline, as inline SVG and real text. Once the page is idle the motion layers on top: dawn line brightens, stakes drop one by one, string lines snap taut, and the logo outline on the plot draws itself and fills. Scrolling lifts the camera from eye level to plan view, which hands over to the Vastu chapter.",
     interaction: "Plan your build on WhatsApp, Get a free estimate, Skip the story, and the chapter rail on the right.",
@@ -178,4 +178,4 @@ export const HEADLINES = [
 ];
 
 export const SUBLINE =
-  "Residential and commercial construction from Saram, Pondicherry. Planned with Vastu, built by one team from foundation to finishing.";
+  "Residential and commercial construction in Pondicherry. Planned with Vastu, built by one team from foundation to finishing.";

@@ -55,11 +55,11 @@ export function StageArt({ stage, className, eager }: { stage: ServiceStage; cla
   return <Drawing name={STAGE_VIEW[stage].drawing} className={className} eager={eager} />;
 }
 
-/** Key plan for the contact page: Saram, the street, the office, north. */
+/** Key plan for the contact page: the street, the office, north. */
 export function LocationArt({ className }: { className?: string }) {
   const road = C.navy700;
   return (
-    <svg viewBox="0 0 800 720" className={className} role="img" aria-label="Key plan: the Sri Skanda Constructions office on 3rd Cross Street, Thirumudi Sethuraman Nagar, Saram, Pondicherry.">
+    <svg viewBox="0 0 800 720" className={className} role="img" aria-label="Key plan: the Sri Skanda Constructions office on 3rd Cross Street, Thirumudi Sethuraman Nagar, Pondicherry.">
       {/* streets */}
       <g stroke={road} strokeWidth={26} strokeLinecap="square" fill="none">
         <path d="M60 470H740" />
@@ -98,7 +98,7 @@ export function LocationArt({ className }: { className?: string }) {
         <text x={400} y={500} textAnchor="middle">3rd Cross Street</text>
         <text x={385} y={302} textAnchor="middle" fill={C.lime}>No. 51</text>
         <text x={268} y={640} transform="rotate(-90 268 640)">Thirumudi Sethuraman Nagar</text>
-        <text x={90} y={96}>Saram · Pondicherry 605011</text>
+        <text x={90} y={96}>Pondicherry 605011</text>
       </g>
       <g transform="translate(700 96)">
         <circle r={44} fill="none" stroke={C.navy300} strokeWidth={1} />

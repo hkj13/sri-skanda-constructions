@@ -54,7 +54,7 @@ export function Hoarding() {
           fill="#ffffff"
           fillOpacity="0.8"
         >
-          {site.address.locality}, {site.address.city}
+          {[site.address.locality, site.address.city].filter(Boolean).join(", ")}
         </text>
       </g>
     </svg>

@@ -75,7 +75,9 @@ export const site: SiteConfig = {
   address: {
     street: "51, 3rd Cross Street",
     area: "Thirumudi Sethuraman Nagar",
-    locality: "Saram",
+    // Neighbourhood, shown between the area and the city when set. Left
+    // empty on purpose: the site presents the company as a Pondicherry builder.
+    locality: "",
     city: "Pondicherry",
     postalCode: "605011",
     country: "India",
@@ -128,17 +130,16 @@ export const site: SiteConfig = {
   },
 };
 
+const join = (...parts: string[]) => parts.filter(Boolean).join(", ");
+
 export function addressLines(s: SiteConfig = site): string[] {
   const a = s.address;
-  return [
-    `${a.street}, ${a.area}`,
-    `${a.locality}, ${a.city} ${a.postalCode}`,
-  ];
+  return [join(a.street, a.area), `${join(a.locality, a.city)} ${a.postalCode}`];
 }
 
 export function fullAddress(s: SiteConfig = site): string {
   const a = s.address;
-  return `${a.street}, ${a.area}, ${a.locality}, ${a.city} ${a.postalCode}, ${a.country}`;
+  return join(a.street, a.area, a.locality, `${a.city} ${a.postalCode}`, a.country);
 }
 
 export function whatsappUrl(message?: string, s: SiteConfig = site): string {

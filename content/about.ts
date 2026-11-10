@@ -11,9 +11,9 @@ import { en, type L } from "./i18n";
  * really work, and add the founder or team.
  */
 export const about = {
-  title: en("A builder from Saram, Pondicherry"),
+  title: en("A builder from Pondicherry"),
   intro: [
-    en("Sri Skanda Constructions builds homes and commercial buildings. Our office is in Saram, Pondicherry, and the work is what you would expect of a builder: custom homes, villas and apartments; offices, shops, showrooms and commercial complexes; renovation of buildings that need it."),
+    en("Sri Skanda Constructions builds homes and commercial buildings. We are based in Pondicherry, and the work is what you would expect of a builder: custom homes, villas and apartments; offices, shops, showrooms and commercial complexes; renovation of buildings that need it."),
     en("Two things shape how we plan. The first is Vastu, which we treat as part of the drawing, not an afterthought. The second is turnkey delivery: one team takes the job from foundation to finishing, so you are never left carrying messages between contractors."),
   ],
   approachTitle: en("How we work"),
@@ -44,7 +44,7 @@ export const about = {
     },
   ] as { title: L; body: L; image: string; alt: L }[],
   baseTitle: en("Where to find us"),
-  base: en("We work from Saram, in the heart of Pondicherry. Come by, or ask us to visit your plot."),
+  base: en("We work from Pondicherry. Come by the office, or ask us to visit your plot."),
 
   /**
    * Founder and team. Shown only when the list has entries.
