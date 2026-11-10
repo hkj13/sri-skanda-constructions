@@ -14,6 +14,7 @@ export const metadata: Metadata = pageMeta({
   description:
     "Tell us about your plot in six short steps and we reply on WhatsApp. Call +91 94880 84277 or visit us at 51, 3rd Cross Street, Thirumudi Sethuraman Nagar, Saram, Pondicherry.",
   path: "/contact",
+  image: "contact",
 });
 
 const c = ui.contact;

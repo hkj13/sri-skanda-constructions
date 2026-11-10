@@ -14,6 +14,7 @@ export const metadata: Metadata = pageMeta({
   description:
     "Sri Skanda Constructions builds homes and commercial buildings from its office in Saram, Pondicherry: Vastu-led planning and turnkey delivery by one team.",
   path: "/about",
+  image: "about",
 });
 
 export default function AboutPage() {

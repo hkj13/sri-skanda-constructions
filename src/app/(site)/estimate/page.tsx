@@ -10,6 +10,7 @@ export const metadata: Metadata = pageMeta({
   description:
     "Get a free estimate for building a house or commercial building in Pondicherry. Enter the built-up area, floors, project type and finish, and we reply on WhatsApp.",
   path: "/estimate",
+  image: "estimate",
 });
 
 export default function EstimatePage() {

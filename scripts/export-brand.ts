@@ -24,6 +24,8 @@ import {
   type LogoVariant,
 } from "../src/brand/build";
 import { LIME, MARK, NAVY, NAVY_2, WHITE } from "../src/brand/logo-art";
+import { tr } from "../content/i18n";
+import { services } from "../content/services";
 
 const require = createRequire(import.meta.url);
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -324,12 +326,43 @@ function ogSvg(title: string[] | null): string {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">${body}</svg>`;
 }
 
+/** Breaks a title into lines that fit `max` pixels of Jost Light at `size`. */
+function wrap(str: string, size: number, max: number): string[] {
+  const f = font(300);
+  const width = (s: string) => f.getAdvanceWidth(s, size, { kerning: true });
+  const lines: string[] = [];
+  let line = "";
+  for (const word of str.split(" ")) {
+    const next = line ? `${line} ${word}` : word;
+    if (line && width(next) > max) {
+      lines.push(line);
+      line = word;
+    } else line = next;
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+/** Share images for the main pages and each service, in public/brand/og. */
+const SHARE_PAGES: { file: string; title: string }[] = [
+  { file: "services", title: "Construction services in Pondicherry." },
+  { file: "process", title: "How a building gets built, stage by stage." },
+  { file: "estimate", title: "Get a free construction estimate." },
+  { file: "contact", title: "Plan your build with us." },
+  { file: "about", title: "A builder from Saram, Pondicherry." },
+  ...services.map((s) => ({ file: `service-${s.slug}`, title: `${tr(s.title)}.` })),
+];
+
 async function exportOg() {
   console.log("Social image");
   write(join(OUT, "og", "og-template.svg"), ogSvg(null) + "\n");
   const filled = ogSvg(["Homes and commercial buildings,", "built in Pondicherry."]);
   write(join(OUT, "og", "og-default.svg"), filled + "\n");
   write(join(OUT, "og", "og-default.png"), await png(filled, 1200, 630));
+  for (const page of SHARE_PAGES) {
+    const lines = wrap(page.title, 68, 1040).slice(0, 2);
+    write(join(OUT, "og", `${page.file}.png`), await png(ogSvg(lines), 1200, 630));
+  }
 }
 
 /* ── 4. Brand sheet ─────────────────────────────────────────────────── */

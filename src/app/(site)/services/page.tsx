@@ -15,6 +15,7 @@ export const metadata: Metadata = pageMeta({
   description:
     "House construction, commercial buildings, Vastu consultation, 2D and 3D planning, renovation and turnkey projects in Pondicherry, by one team from foundation to finishing.",
   path: "/services",
+  image: "services",
 });
 
 export default function ServicesPage() {

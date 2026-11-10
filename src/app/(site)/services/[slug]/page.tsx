@@ -27,6 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: tr(s.title),
     description: `${tr(s.summary)} ${tr(s.intro[0])}`.slice(0, 158),
     path: `/services/${s.slug}`,
+    image: `service-${s.slug}`,
   });
 }
 

@@ -16,12 +16,16 @@ export function pageMeta({
   description,
   path,
   index = true,
+  image,
 }: {
   title: string;
   description: string;
   path: string;
   index?: boolean;
+  /** File name in public/brand/og, without .png. Defaults to the general image. */
+  image?: string;
 }): Metadata {
+  const img = image ? { ...OG_IMAGE, url: `/brand/og/${image}.png`, alt: title } : OG_IMAGE;
   return {
     title,
     description,
@@ -34,13 +38,13 @@ export function pageMeta({
       url: path,
       title,
       description,
-      images: [OG_IMAGE],
+      images: [img],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [OG_IMAGE.url],
+      images: [img.url],
     },
   };
 }

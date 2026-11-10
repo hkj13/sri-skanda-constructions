@@ -14,6 +14,7 @@ export const metadata: Metadata = pageMeta({
   description:
     "The build journey with Sri Skanda Constructions in Pondicherry: consultation, site visit and soil test, design and Vastu, plan approval, agreement and BOQ, construction, quality checks and handover.",
   path: "/process",
+  image: "process",
 });
 
 export default function ProcessPage() {
