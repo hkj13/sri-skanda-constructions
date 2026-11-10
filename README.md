@@ -46,8 +46,6 @@ Useful addresses while developing:
 | --- | --- |
 | `/?3d=off` | Any page with the 3D model switched off (shows the drawings) |
 | `/?3d=force` | Any page with the 3D model on, skipping the device checks |
-| `/brand-lab` | The logo, every version, and the downloadable brand files. Hidden: not linked, not indexed |
-| `/design-lab` | The approved design proposal and storyboard. Hidden: not linked, not indexed |
 
 ---
 
@@ -147,7 +145,6 @@ public/images/      local copies of the stock photos
 public/videos/      optimised video loops and poster frames
 scripts/            brand export, drawing export, video optimisation
 src/app/(site)/     the public pages
-src/app/(lab)/      the hidden brand and design review pages
 src/brand/          logo geometry and the <Logo> component
 src/components/     header, footer, forms, buttons, the process timeline
 src/design/         design tokens and the contrast table
@@ -222,7 +219,7 @@ npm run brand:export
 
 That writes the lockups (horizontal, stacked, mark), single-colour and
 reversed versions, PNGs, the favicon set, the share images for every page,
-and the brand sheet, to `public/brand`. See them all at `/brand-lab`.
+and the brand sheet, to `public/brand`.
 
 ---
 
@@ -230,7 +227,7 @@ and the brand sheet, to `public/brand`. See them all at `/brand-lab`.
 
 - Canonical address: `https://www.sriskandaconstructions.com` (set in `content/site.ts`).
 - Every page has its own title, description and share image.
-- `sitemap.xml` and `robots.txt` are generated. The lab pages and `/api` are excluded.
+- `sitemap.xml` and `robots.txt` are generated. `/api` is excluded.
 - Structured data (JSON-LD): the business as a `GeneralContractor` with full address, phone, area served, opening hours and coordinates (once supplied), and its services; each service page adds `Service` and `FAQPage` data.
 - Service pages are written for local searches such as "house construction in Pondicherry", with genuinely useful answers rather than keyword lists.
 
