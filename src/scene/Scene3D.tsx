@@ -13,6 +13,7 @@ import {
   type Part,
   type Tone,
 } from "./building";
+import { threeChapterAt, windowClip } from "@/home/story";
 import { story } from "./store";
 
 /**
@@ -20,9 +21,11 @@ import { story } from "./store";
  * accents, soft daylight. One canvas for the whole site.
  *
  * The canvas is fixed to the screen and follows whichever "slot" element is
- * in view (a home chapter stage, or the top of an inner page), so it looks
- * like part of that section. What it shows is a pure function of the story
- * time `g` (chapter + scroll progress), read every frame from the store.
+ * in view (the home story's stage, or the top of an inner page), so it
+ * looks like part of that section. What it shows is a pure function of the
+ * story time `g` (chapter + scroll progress), read every frame from the
+ * store. On the home page it shows only the 3D chapters, and the laser
+ * sweep between chapters cuts it exactly like the drawings.
  */
 
 const NAVY = "#1a2340";
@@ -46,6 +49,8 @@ const view = {
   /** Shifts the building right, as a share of the width (home chapters). */
   shift: 0,
   home: false,
+  /** The home chapter being shown, or -1 on inner pages. */
+  chapter: -1,
 };
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
@@ -258,7 +263,7 @@ function Crane() {
   const trolley = useRef<THREE.Group>(null);
   const cable = useRef<THREE.Mesh>(null);
   const hook = useRef<THREE.Mesh>(null);
-  const { camera, size } = useThree();
+  const { camera, size, gl } = useThree();
   const els = useRef<{ load: HTMLElement | null; cables: HTMLElement[] }>({ load: null, cables: [] });
   const angle = useRef(0);
 
@@ -295,7 +300,7 @@ function Crane() {
     const host = load.offsetParent as HTMLElement | null;
     const hostRect = host?.getBoundingClientRect();
     if (!hostRect) return;
-    const canvasTop = (load.closest("[data-chapter]")?.querySelector("[data-scene-slot]") as HTMLElement | null)?.getBoundingClientRect().top ?? 0;
+    const canvasTop = gl.domElement.getBoundingClientRect().top;
     const slotX = hostRect.left + load.offsetLeft + load.offsetWidth / 2;
     const slotY = hostRect.top + load.offsetTop - canvasTop;
 
@@ -407,17 +412,34 @@ function Crane() {
 
 type Pose = { az: number; el: number; dist: number; y: number };
 
-function poseFor(g: number, time: number): Pose {
+/** Camera for an inner page, from the stage of the building it shows. */
+function poseForPage(g: number, time: number): Pose {
   const c = Math.floor(g);
   const p = g - c;
-  if (c <= 2) {
-    const orbit = smooth(span(p, 0.42, 1));
-    return { az: 35 + orbit * 360, el: lerp(58, 27, smooth(span(p, 0.1, 0.45))), dist: lerp(54, 47, smooth(p)), y: 3.6 };
-  }
   if (c <= 4) return { az: lerp(28, 50, smooth(p)), el: lerp(22, 16, smooth(p)), dist: 60, y: lerp(4.5, 7.5, smooth(p)) };
   if (c <= 7) return { az: 43 + Math.sin(time * 0.25) * 3, el: 20, dist: 47, y: 4.6 };
-  if (c <= 9) return { az: lerp(52, 66, smooth(p)), el: lerp(17, 11, smooth(p)), dist: lerp(46, 38, smooth(p)), y: 4.2 };
-  return { az: 44 + Math.sin(time * 0.2) * 7, el: 22, dist: 48, y: 4.8 };
+  return { az: lerp(52, 66, smooth(p)), el: lerp(17, 11, smooth(p)), dist: lerp(46, 38, smooth(p)), y: 4.2 };
+}
+
+/**
+ * Camera for a home chapter. Every chapter keeps moving the whole way
+ * through, so the model is never still while the page scrolls.
+ */
+function poseForChapter(c: number, g: number, time: number): Pose {
+  const p = clamp01(g - c);
+  const e = smooth(p);
+  switch (c) {
+    case 2: // the massing model rises, then the camera walks round it
+      return { az: lerp(18, 78, e), el: lerp(44, 26, smooth(span(p, 0, 0.7))), dist: lerp(56, 46, e), y: 3.6 };
+    case 4: // the frame climbs; the camera rises with it
+      return { az: lerp(28, 50, e), el: lerp(22, 16, e), dist: 60, y: lerp(4.5, 7.5, e) };
+    case 6: // the finished building, home or commercial
+      return { az: lerp(34, 56, e) + Math.sin(time * 0.25) * 2, el: lerp(23, 19, e), dist: 47, y: 4.6 };
+    case 8: // dusk: closer and lower, towards the open door
+      return { az: lerp(52, 66, e), el: lerp(17, 11, e), dist: lerp(46, 38, e), y: 4.2 };
+    default: // the finished building, in the evening
+      return { az: lerp(28, 58, e) + Math.sin(time * 0.2) * 3, el: lerp(25, 19, e), dist: lerp(50, 46, e), y: 4.8 };
+  }
 }
 
 function Rig() {
@@ -429,6 +451,7 @@ function Rig() {
   const fill = useRef<THREE.HemisphereLight>(null);
   const side = useRef<THREE.DirectionalLight>(null);
   const shift = useRef(-1);
+  const shown = useRef(-2);
 
   useFrame((state, dt) => {
     // Ease the two switches towards where the visitor set them.
@@ -436,8 +459,10 @@ function Rig() {
     story.plan += (story.planTarget - story.plan) * ease;
     story.variant += (story.variantTarget - story.variant) * ease;
     const g = view.g;
-    const v = view.variant ?? (g >= T.wallsIn ? story.variant : 0);
-    const plan = g >= 2 && g < 3 ? story.plan : 0;
+    // The switches belong to their chapters: building type to Homes and
+    // commercial, the flat plan to Architectural planning.
+    const v = view.variant ?? (g >= T.wallsIn && g < 7.1 ? story.variant : 0);
+    const plan = view.home && g >= 1.9 && g < 3.1 ? story.plan : 0;
 
     // Two buildings on one plot: one sinks as the other rises.
     if (home.current) {
@@ -451,8 +476,9 @@ function Rig() {
       commercial.current.scale.y = Math.max(0.004, s);
     }
 
-    const want = poseFor(g, state.clock.elapsedTime);
-    if (view.az !== null) want.az = view.az + Math.sin(state.clock.elapsedTime * 0.25) * 4;
+    const t = state.clock.elapsedTime;
+    const want = view.home && view.chapter >= 0 ? poseForChapter(view.chapter, g, t) : poseForPage(g, t);
+    if (view.az !== null) want.az = view.az + Math.sin(t * 0.25) * 4;
     if (v > 0) {
       want.dist += 9 * smooth(v);
       want.y += 2.4 * smooth(v);
@@ -463,6 +489,11 @@ function Rig() {
       want.el = lerp(want.el, 87, k);
       want.dist = lerp(want.dist, 62, k);
       want.y = lerp(want.y, 0, k);
+    }
+    // A different chapter (or page) starts from its own camera, not a fly-over.
+    if (shown.current !== view.chapter) {
+      shown.current = view.chapter;
+      cur.current = null;
     }
     const c = cur.current ?? (cur.current = { ...want });
     const k = 1 - Math.exp(-dt * 7);
@@ -490,7 +521,7 @@ function Rig() {
     // Dusk for the handover, evening for the finished building.
     const dusk = !view.home
       ? g >= 8 ? 0.35 : 0
-      : g >= 10 ? 0.55 : smooth(span(g, 7.9, 8.2)) * (1 - smooth(span(g, 9, 9.4)));
+      : view.chapter === 8 ? smooth(span(g, 7.93, 8.2)) : view.chapter === 10 ? 0.55 : 0;
     if (key.current) key.current.intensity = lerp(1.9, 0.4, dusk);
     if (fill.current) fill.current.intensity = lerp(1.95, 0.7, dusk);
     if (side.current) side.current.intensity = lerp(0.75, 0.12, dusk);
@@ -562,6 +593,7 @@ export default function Scene3D({ force, onGiveUp }: { force: boolean; onGiveUp:
     if (!el) return;
     let raf = 0;
     let wasOn = false;
+    let lastClip = "none";
     const tick = () => {
       raf = requestAnimationFrame(tick);
       const vh = window.innerHeight;
@@ -576,7 +608,10 @@ export default function Scene3D({ force, onGiveUp }: { force: boolean; onGiveUp:
           best = slot;
         }
       }
-      const on = !!best && bestArea > 4 && !document.hidden;
+      // On the home page the model shows only during its own chapters.
+      const inStory = !!best && best.dataset.story !== undefined;
+      const chapter = inStory ? threeChapterAt(story.g) : -1;
+      const on = !!best && bestArea > 4 && !document.hidden && (!inStory || chapter >= 0);
       if (on !== wasOn) {
         wasOn = on;
         setRunning(on);
@@ -587,16 +622,21 @@ export default function Scene3D({ force, onGiveUp }: { force: boolean; onGiveUp:
       el.style.width = `${r.width}px`;
       el.style.height = `${r.height}px`;
       el.style.transform = `translate3d(${r.left}px, ${r.top}px, 0)`;
-      const chapter = best.dataset.chapter;
-      if (chapter !== undefined) {
-        const c = Number(chapter);
-        view.g = c + Math.min(0.9999, story.progress[c]);
+      const clip = inStory ? windowClip(story.g, chapter, chapter + 1) : "none";
+      if (clip !== lastClip) {
+        lastClip = clip;
+        el.style.clipPath = clip === "none" ? "" : clip;
+      }
+      if (inStory) {
+        view.g = story.g;
+        view.chapter = chapter;
         view.variant = null;
         view.az = null;
         view.shift = 0.2;
         view.home = true;
       } else {
         view.g = Number(best.dataset.g ?? 6.5);
+        view.chapter = -1;
         view.variant = best.dataset.variant === "commercial" ? 1 : 0;
         view.az = best.dataset.az ? Number(best.dataset.az) : 45;
         view.shift = 0;
