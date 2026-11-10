@@ -151,7 +151,7 @@ src/app/(lab)/      the hidden brand and design review pages
 src/brand/          logo geometry and the <Logo> component
 src/components/     header, footer, forms, buttons, the process timeline
 src/design/         design tokens and the contrast table
-src/home/           the home page chapters
+src/home/           the home story: stage, chapter drawings, controls, timing
 src/scene/          the building: one parts list, drawn as SVG and as 3D
 ```
 
@@ -176,10 +176,20 @@ Still drawings used as images are generated into `public/drawings` by
 
 ### Motion
 
-- **Scroll is construction progress.** Each home chapter sets a CSS variable
-  `--p` from 0 to 1 as it scrolls; drawings use it to place each part.
+- **Scroll is construction progress.** The home story is one line of time,
+  0 to 11 (chapter plus progress), set by the scroll position
+  (`src/home/Story.tsx`, timings in `src/home/story.ts`). One stage stays on
+  screen for the whole story: on wide screens the text pins on the left and
+  the drawing plays on the right; on phones the stage stays at the top and
+  the text scrolls beneath it. Each drawing reads its progress from the CSS
+  variable `--p` to place each part.
+- **No gaps between chapters.** At each change of chapter a lime laser line
+  sweeps down the stage and the next drawing (or the 3D model) appears above
+  it while the last one is still finishing below. The opening plot turns
+  into the Vastu plan without a cut.
 - **Reduced motion:** every chapter shows its finished drawing with the same
-  words. Switches, the slider and the forms all still work.
+  words, and chapters change with a short fade. Switches, the slider and the
+  forms all still work.
 - **The laser line:** the lime bar at the top is the scroll progress. On a
   page change it sweeps down the screen while the new page is revealed behind
   it (browser View Transitions; other browsers change page normally).
@@ -195,8 +205,9 @@ bash scripts/optimize-videos.sh <folder-with-original-mp4s>
 ```
 
 That writes a WebM and an MP4 (at most 10 seconds, 720 px, no sound) and a
-poster frame for each. Videos load only on desktop, near their chapter,
-never with Save-Data or reduced motion, and pause when off screen.
+poster frame for each. The clips play only on wide screens with a mouse,
+load when their chapter is near and play only while it is on the stage.
+Phones, Save-Data and reduced motion get each clip's still frame instead.
 
 ---
 
