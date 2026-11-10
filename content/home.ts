@@ -238,3 +238,33 @@ export const renovation: {
   illustrationNote: en("Illustration, not a real project"),
   photos: null,
 };
+
+export type StoryPhoto = { src: string; caption: L; alt: L };
+
+/**
+ * Site photographs pinned to the drawings in the home story (on phones they
+ * sit under the chapter text). They are the stock photos listed in
+ * CREDITS.md. TODO(client): replace each with a photo from a real site.
+ */
+export const storyPhotos: Partial<Record<ChapterId, StoryPhoto>> = {
+  planning: {
+    src: "/images/at-the-screen.jpg",
+    caption: en("Drawn on screen before work starts"),
+    alt: en("A person working at a screen"),
+  },
+  foundation: {
+    src: "/images/site-rebar.jpg",
+    caption: en("Steel checked before the pour"),
+    alt: en("Workers tying steel on a construction site, seen from above"),
+  },
+  handover: {
+    src: "/images/site-worker.jpg",
+    caption: en("One team on site"),
+    alt: en("A site worker in a yellow helmet"),
+  },
+  sustainable: {
+    src: "/images/planning-desk.jpg",
+    caption: en("Planned on paper first"),
+    alt: en("Two people going through a drawing and figures at a desk"),
+  },
+};

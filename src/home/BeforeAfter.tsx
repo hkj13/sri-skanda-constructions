@@ -3,8 +3,10 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { C } from "@/scene/iso-core";
+import { story, subscribe } from "@/scene/store";
 import { renovation } from "@content/home";
 import { tr } from "@content/i18n";
+import { getChoice, setChoice, useChoice } from "./choices";
 import { Tag } from "./parts";
 
 /** The same two-storey front, drawn tired or renovated. */
@@ -139,6 +141,131 @@ export function BeforeAfter({
         className="peer absolute inset-0 h-full w-full cursor-ew-resize opacity-0"
       />
       <span aria-hidden="true" className="pointer-events-none absolute inset-0 outline-offset-[-4px] outline-accent peer-focus-visible:outline-4" />
+    </div>
+  );
+}
+
+/* ── Home story: the slider split between the stage and the text ────── */
+
+/**
+ * The before and after drawing on the story stage. It follows the slider
+ * in the text column, and can also be dragged sideways with a mouse or a
+ * finger (vertical swipes still scroll the page).
+ */
+export function RenovationStage() {
+  const [pos, setPos] = useChoice("reno");
+  const box = useRef<HTMLDivElement>(null);
+  // Mouse: drag at once. Touch: only once the finger moves sideways, so a
+  // swipe up or down still scrolls the page.
+  const drag = useRef<{ id: number; x: number; on: boolean } | null>(null);
+
+  // One small nudge the first time the chapter arrives, to show it moves.
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let done = false;
+    const timers: number[] = [];
+    const check = () => {
+      if (done || story.g < 7.18 || story.g > 7.8) return;
+      done = true;
+      // Stop as soon as the visitor moves it themselves.
+      let expect = getChoice("reno");
+      [44, 62, expect].forEach((value, n) =>
+        timers.push(
+          window.setTimeout(() => {
+            if (getChoice("reno") !== expect) return;
+            expect = value;
+            setChoice("reno", value);
+          }, 300 + n * 320),
+        ),
+      );
+    };
+    const stop = subscribe(check);
+    return () => {
+      stop();
+      timers.forEach((t) => window.clearTimeout(t));
+    };
+  }, []);
+
+  const move = (e: React.PointerEvent) => {
+    const r = box.current?.getBoundingClientRect();
+    if (!r) return;
+    setPos(Math.round(Math.min(100, Math.max(0, ((e.clientX - r.left) / r.width) * 100))));
+  };
+
+  return (
+    <div
+      ref={box}
+      className="absolute inset-x-[4%] inset-y-[9%] z-[1] cursor-ew-resize touch-pan-y select-none overflow-hidden lg:left-0 lg:right-[10%]"
+      style={{ "--pos": `${pos}%` } as React.CSSProperties}
+      onPointerDown={(e) => {
+        const mouse = e.pointerType === "mouse";
+        drag.current = { id: e.pointerId, x: e.clientX, on: mouse };
+        if (mouse) {
+          e.currentTarget.setPointerCapture(e.pointerId);
+          move(e);
+        }
+      }}
+      onPointerMove={(e) => {
+        const d = drag.current;
+        if (!d || d.id !== e.pointerId) return;
+        if (!d.on && Math.abs(e.clientX - d.x) > 8) {
+          d.on = true;
+          e.currentTarget.setPointerCapture(e.pointerId);
+        }
+        if (d.on) move(e);
+      }}
+      onPointerUp={() => (drag.current = null)}
+      onPointerCancel={() => (drag.current = null)}
+    >
+      <div className="absolute inset-0">
+        <Facade old={false} />
+      </div>
+      <div className="absolute inset-0 transition-[clip-path] duration-300 ease-out motion-reduce:transition-none" style={{ clipPath: "inset(0 calc(100% - var(--pos)) 0 0)" }}>
+        <Facade old />
+      </div>
+      <svg viewBox="0 0 100 20" className="pointer-events-none absolute left-4 top-4 h-7 w-auto" aria-hidden="true">
+        <rect width={100} height={20} fill={C.navy} />
+        <Tag x={50} y={14} anchor="middle" fill={C.white} size={10}>{tr(renovation.before)}</Tag>
+      </svg>
+      <svg viewBox="0 0 100 20" className="pointer-events-none absolute right-4 top-4 h-7 w-auto" aria-hidden="true">
+        <rect width={100} height={20} fill={C.navy} />
+        <Tag x={50} y={14} anchor="middle" fill={C.lime} size={10}>{tr(renovation.after)}</Tag>
+      </svg>
+      <p className="t-tech pointer-events-none absolute bottom-3 left-4 bg-primary px-2 py-1 text-[11px] text-navy-300">
+        {tr(renovation.illustrationNote)}
+      </p>
+      <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 w-1 -translate-x-1/2 bg-primary transition-[left] duration-300 ease-out motion-reduce:transition-none" style={{ left: "var(--pos)" }}>
+        <span className="absolute inset-y-0 left-1/2 w-0.5 -translate-x-1/2 bg-accent" />
+        <span className="absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-accent text-xl font-semibold text-primary ring-4 ring-primary">
+          ‹ ›
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/** The slider itself, in the text column: a real range input for keys and screen readers. */
+export function RenovationControl() {
+  const [pos, setPos] = useChoice("reno");
+  return (
+    <div className="mt-8 max-w-sm">
+      <label htmlFor="reno-slider" className="t-tech flex justify-between text-white">
+        <span>{tr(renovation.before)}</span>
+        <span className="text-accent">{tr(renovation.after)}</span>
+      </label>
+      <input
+        id="reno-slider"
+        type="range"
+        min={0}
+        max={100}
+        value={pos}
+        onChange={(e) => setPos(Number(e.target.value))}
+        aria-label="Compare before and after renovation"
+        aria-valuetext={`${Math.round(pos)}% before, ${Math.round(100 - pos)}% after`}
+        className="reno-range mt-3 w-full"
+        style={{ "--fill": `${pos}%` } as React.CSSProperties}
+      />
+      <p className="t-small mt-2 text-navy-300">{tr(renovation.hint)}</p>
     </div>
   );
 }

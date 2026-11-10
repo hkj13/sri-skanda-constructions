@@ -3,7 +3,6 @@
 import type { CSSProperties } from "react";
 import { BLOCK, VEL } from "@/brand/logo-art";
 import { PLOT } from "@/scene/building";
-import { IsoGround } from "@/scene/Iso";
 import { C, ISO, isoPoint, sc } from "@/scene/iso-core";
 import { SCENE_SVG, Tag } from "./parts";
 
@@ -17,61 +16,34 @@ import { SCENE_SVG, Tag } from "./parts";
  */
 
 const VB = `0 0 ${ISO.w} ${ISO.h}`;
-const i = (n: number) => ({ "--i": n }) as CSSProperties;
 
-/* ── 00 Groundbreaking ──────────────────────────────────────────────── */
+/* ── 00 Groundbreaking: dawn and the mark ───────────────────────────── */
 
+/**
+ * The opening drawing: dawn on the horizon and the company mark standing
+ * on the plot. The plot itself, with its stakes and strings, is drawn by
+ * PlotMorph (layers.tsx), because it carries on into the next chapter.
+ * Everything here fades as the plot turns into the Vastu plan.
+ */
 export function GroundScene({ label }: { label: string }) {
   const { x0, x1, z0, z1 } = PLOT;
-  const corners: [number, number, string, "start" | "end"][] = [
-    [x0, z0, "D", "start"],
-    [x1, z0, "C", "start"],
-    [x1, z1, "B", "start"],
-    [x0, z1, "A", "end"],
-  ];
-  const pts = corners.map(([x, z]) => isoPoint(x, 0, z));
   const [cx, cy] = isoPoint((x0 + x1) / 2, 0, (z0 + z1) / 2 + 1.5);
   const s = 4.3;
   const horizon = isoPoint(x0, 0, z0)[1] - 64;
-  const [rx, ry] = isoPoint((x0 + x1) / 2, 0, z1);
   return (
     <svg viewBox={VB} className={SCENE_SVG} role="img" aria-label={label} preserveAspectRatio="xMidYMid meet">
-      {/* dawn on the horizon */}
-      <g className="gb-dawn">
-        <path d={`M${ISO.ox - 120} ${horizon}A120 120 0 0 1 ${ISO.ox + 120} ${horizon}`} fill={C.limeLight} fillOpacity={0.08} stroke={C.limeLight} strokeWidth={1} strokeOpacity={0.6} />
-        <path d={`M${ISO.ox - 190} ${horizon}A190 190 0 0 1 ${ISO.ox + 190} ${horizon}`} fill="none" stroke={C.limeLight} strokeWidth={0.6} strokeOpacity={0.3} />
+      <g style={{ opacity: "clamp(0, calc((0.95 - var(--p)) / 0.45), 1)" }}>
+        {/* dawn on the horizon, rising as the page scrolls */}
+        <g style={{ transform: "translateY(calc(var(--p) * -36px))" }}>
+        <g className="gb-dawn">
+          <path d={`M${ISO.ox - 120} ${horizon}A120 120 0 0 1 ${ISO.ox + 120} ${horizon}`} fill={C.limeLight} fillOpacity={0.1} stroke={C.limeLight} strokeWidth={1.2} strokeOpacity={0.7} />
+          <path d={`M${ISO.ox - 190} ${horizon}A190 190 0 0 1 ${ISO.ox + 190} ${horizon}`} fill="none" stroke={C.limeLight} strokeWidth={0.8} strokeOpacity={0.35} />
+        </g>
+        </g>
+        <path d={`M0 ${horizon}H${ISO.w}`} stroke={C.navy300} strokeOpacity={0.5} strokeWidth={1} />
       </g>
-      <path d={`M0 ${horizon}H${ISO.w}`} stroke={C.navy700} strokeWidth={1} />
-
-      {/* the plot fades and lifts away as the next chapter arrives */}
-      <g style={{ opacity: "calc(1 - var(--p) * 1.2)", transform: "translateY(calc(var(--p) * -50px))" }}>
-        <IsoGround stakes={false} />
-        {/* string lines, pulled taut between the stakes */}
-        {pts.map(([ax, ay], n) => {
-          const [bx, by] = pts[(n + 1) % 4];
-          return (
-            <path key={n} d={`M${ax} ${ay - 15}L${bx} ${by - 15}`} pathLength={1} stroke={C.lime} strokeWidth={1.4} className="gb-string" style={i(n)} />
-          );
-        })}
-        {corners.map(([x, z, name, side], n) => {
-          const [sx, sy] = isoPoint(x, 0, z);
-          return (
-            <g key={name}>
-              <g className="gb-stake" style={i(n)}>
-                <path d={`M${sx} ${sy + 3}V${sy - 20}`} stroke={C.lime} strokeWidth={3} />
-                <rect x={sx - 4} y={sy - 26} width={8} height={8} fill={C.lime} />
-              </g>
-              <Tag x={side === "start" ? sx + 12 : sx - 12} y={sy - 28} anchor={side} className="gb-tag" style={i(n)}>
-                {`Stake ${name}`}
-              </Tag>
-            </g>
-          );
-        })}
-        <Tag x={rx} y={ry + 34} anchor="middle" className="gb-tag" style={i(5)}>
-          Road
-        </Tag>
-
-        {/* the mark: drawn in blueprint strokes, then filled */}
+      {/* the mark: drawn in blueprint strokes, then filled; lifts away as the plan forms */}
+      <g style={{ opacity: "clamp(0, calc((0.66 - var(--p)) / 0.36), 1)", transform: "translateY(calc(var(--p) * -110px))" }}>
         <g transform={`translate(${cx - 32 * s} ${cy - 60 * s}) scale(${s})`}>
           <path d={`${BLOCK} ${VEL}`} fill={C.lime} fillRule="evenodd" className="gb-fill" />
           <path d={BLOCK} pathLength={1} fill="none" stroke={C.white} strokeWidth={0.45} className="gb-draw" style={{ "--d": "1.5s" } as CSSProperties} />
@@ -101,14 +73,21 @@ export function FoundationScene({ label, tags }: { label: string; tags: { plinth
         <pattern id="earth" width={12} height={12} patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
           <path d="M0 0V12" stroke={C.navy700} strokeWidth={2} />
         </pattern>
+        {/* the trench is cut out of the soil as it is dug, so the footage behind shows through */}
+        <mask id="trench-cut" maskUnits="userSpaceOnUse" x={0} y={0} width={800} height={720}>
+          <rect width={800} height={720} fill="#fff" />
+          <rect x={cxm - 170} y={ground} width={340} height={300} fill="#000" className="sc-fall" style={sc(0.08, 0.24)} />
+        </mask>
       </defs>
       {/* soil, in section */}
       <g className="sc" style={sc(0, 0.1)}>
-        <rect x={40} y={ground} width={720} height={380} fill={C.navy950} />
-        <rect x={40} y={ground} width={720} height={380} fill="url(#earth)" />
+        <g mask="url(#trench-cut)">
+          <rect x={40} y={ground} width={720} height={380} fill={C.navy950} />
+          <rect x={40} y={ground} width={720} height={380} fill="url(#earth)" />
+        </g>
       </g>
       {/* the trench, dug down from ground level */}
-      <rect x={cxm - 170} y={ground} width={340} height={300} fill={C.navy} fillOpacity={0.55} className="sc-fall" style={sc(0.08, 0.24)} />
+      <rect x={cxm - 170} y={ground} width={340} height={300} fill={C.navy} fillOpacity={0.3} className="sc-fall" style={sc(0.08, 0.24)} />
       <path d={`M40 ${ground}H760`} pathLength={1} stroke={C.white} strokeWidth={2.5} className="sc-draw" style={sc(0, 0.1)} />
       {/* PCC bed */}
       <rect x={cxm - 150} y={ground + 276} width={300} height={24} fill={C.gray400} stroke={C.navy} className="sc" style={sc(0.24, 0.32, -30)} />
@@ -173,7 +152,7 @@ export function FinishingScene({ label, tags }: { label: string; tags: { brick: 
         height={rh}
         fill={`url(#brick-${row % 2})`}
         className="sc"
-        style={sc(0.02 + r * 0.022, 0.07 + r * 0.022, -14)}
+        style={sc(0.01 + r * 0.021, 0.06 + r * 0.021, -14)}
       />
     );
   });
@@ -197,26 +176,26 @@ export function FinishingScene({ label, tags }: { label: string; tags: { brick: 
       <rect x={X} y={Y} width={W} height={H} fill={C.navy950} />
       {bricks}
       {/* plaster over the upper wall */}
-      <rect x={X} y={Y} width={W} height={H * 0.7} fill={C.gray200} className="sc-wipe" style={sc(0.44, 0.6)} />
+      <rect x={X} y={Y} width={W} height={H * 0.7} fill={C.gray200} className="sc-wipe" style={sc(0.38, 0.52)} />
       {/* paint: white behind a lime leading edge */}
-      <rect x={X} y={Y} width={W} height={H * 0.46} fill={C.white} className="sc-wipe" style={sc(0.6, 0.78)} />
-      <rect x={X - 14} y={Y} width={14} height={H * 0.46} fill={C.lime} className="sc-sweep" style={{ ...sc(0.6, 0.78), "--travel": `${W}px` } as CSSProperties} />
-      {win(X + 80, 0.78, true)}
-      {win(X + 370, 0.84)}
+      <rect x={X} y={Y} width={W} height={H * 0.46} fill={C.white} className="sc-wipe" style={sc(0.52, 0.68)} />
+      <rect x={X - 14} y={Y} width={14} height={H * 0.46} fill={C.lime} className="sc-sweep" style={{ ...sc(0.52, 0.68), "--travel": `${W}px` } as CSSProperties} />
+      {win(X + 80, 0.66, true)}
+      {win(X + 370, 0.72)}
       <rect x={X} y={Y} width={W} height={H} fill="none" stroke={C.white} strokeWidth={2} />
       <path d={`M${X - 50} ${Y + H}H${X + W + 50}`} stroke={C.white} strokeWidth={2.5} />
 
-      <g className="sc" style={sc(0.3, 0.38)}>
+      <g className="sc" style={sc(0.26, 0.34)}>
         <rect x={X + 16} y={Y + H - 44} width={86} height={28} fill={C.navy} />
         <Tag x={X + 28} y={Y + H - 25} fill={C.white}>{tags.brick}</Tag>
       </g>
-      <g className="sc" style={sc(0.58, 0.64)}>
+      <g className="sc" style={sc(0.5, 0.56)}>
         <Tag x={X + 28} y={Y + H * 0.62} fill={C.navy}>{tags.plaster}</Tag>
       </g>
-      <g className="sc" style={sc(0.76, 0.82)}>
+      <g className="sc" style={sc(0.66, 0.72)}>
         <Tag x={X + 28} y={Y + 32} fill={C.navy}>{tags.paint}</Tag>
       </g>
-      <g className="sc" style={sc(0.9, 0.96)}>
+      <g className="sc" style={sc(0.84, 0.92)}>
         <path d={`M${X + 445} ${Y + 46}V${Y - 24}`} stroke={C.navy300} strokeWidth={1} />
         <Tag x={X + 445} y={Y - 32} anchor="middle">{tags.window}</Tag>
       </g>
@@ -226,9 +205,9 @@ export function FinishingScene({ label, tags }: { label: string; tags: { brick: 
 
 /* ── 08 Handover: the key, dropped into an open hand ────────────────── */
 
-export function KeyAndHand({ label }: { label: string }) {
+export function KeyAndHand({ label, className = "mt-8 h-auto w-[min(60%,240px)]" }: { label: string; className?: string }) {
   return (
-    <svg viewBox="0 0 220 170" className="mt-8 h-auto w-[min(60%,240px)]" role="img" aria-label={label}>
+    <svg viewBox="0 0 220 170" className={className} role="img" aria-label={label}>
       <g className="sc" style={sc(0.58, 0.82, -90)}>
         <g transform="rotate(-18 96 60)">
           <circle cx={78} cy={60} r={15} fill="none" stroke={C.white} strokeWidth={5} />

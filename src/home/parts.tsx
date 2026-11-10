@@ -10,7 +10,8 @@ export function TitleBlock({ sheet, drawing, scale }: { sheet: string; drawing: 
   return (
     <p
       aria-hidden="true"
-      className="t-tech pointer-events-none absolute right-[calc(var(--margin)+3.5rem)] top-[calc(var(--header-h)+1.25rem)] z-10 hidden border border-navy-300/70 text-[11px] text-navy-300 lg:flex"
+      data-title=""
+      className="t-tech pointer-events-none absolute right-[calc(var(--margin)+3.5rem)] top-[calc(var(--header-h)+1.25rem)] z-10 hidden border border-navy-300/70 bg-primary text-[11px] text-navy-300 lg:flex"
     >
       <span className="border-r border-navy-300/70 px-3 py-1.5 text-accent">{sheet}</span>
       <span className="border-r border-navy-300/70 px-3 py-1.5">{drawing}</span>
@@ -55,47 +56,6 @@ export function ChapterText({
         </p>
       ) : null}
     </div>
-  );
-}
-
-/**
- * Stage layout: text in five columns, the drawing in the other seven and
- * bleeding to the right edge, so the full width is always in use.
- */
-export function Stage({
-  text,
-  scene,
-  copy,
-  slot,
-}: {
-  text: ReactNode;
-  scene: ReactNode;
-  copy: ChapterCopy;
-  /** Marks this stage as a place for the 3D model, at the given chapter. */
-  slot?: number;
-}) {
-  return (
-    <>
-      {slot !== undefined ? (
-        <div
-          data-scene-slot=""
-          data-chapter={slot}
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 hidden lg:block"
-        />
-      ) : null}
-      <TitleBlock sheet={copy.sheet} drawing={copy.drawing} scale={copy.scale} />
-      <div className="shell grid-12 h-full items-center gap-y-10 pb-16 pt-[calc(var(--header-h)+3rem)] lg:pb-0 lg:pt-[var(--header-h)]">
-        <div className="col-span-12 lg:col-span-5 2xl:col-span-4">{text}</div>
-        <div
-          data-scene=""
-          className="scene-fit relative col-span-12 -mx-[var(--margin)] lg:col-span-7 lg:col-start-6 lg:mx-0 lg:mr-[calc(var(--margin)*-1)] lg:h-full 2xl:col-span-8 2xl:col-start-5"
-        >
-          {/* A 10:9 box that fits the column, so overlays line up with the drawing. */}
-          <div className="scene-box">{scene}</div>
-        </div>
-      </div>
-    </>
   );
 }
 

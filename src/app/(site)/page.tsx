@@ -1,39 +1,123 @@
 import { ButtonLink, WhatsAppButton } from "@/components/ui/Button";
-import { BeforeAfter } from "@/home/BeforeAfter";
-import { Chapter } from "@/home/Chapter";
-import { ChapterRail, FloorCounter, SceneVideo } from "@/home/client";
-import { ChapterText, SCENE_SVG, Stage } from "@/home/parts";
-import { PlanningChapter } from "@/home/PlanningChapter";
-import { FinishingScene, FoundationScene, GroundScene, KeyAndHand, SustainableScene } from "@/home/scenes";
-import { TypesChapter } from "@/home/TypesChapter";
-import { VastuChapter } from "@/home/VastuChapter";
+import { RenovationControl } from "@/home/BeforeAfter";
+import { ChapterRail, FloorCounter } from "@/home/client";
+import { FacingControl, PlanViewControl, TypeControl } from "@/home/controls";
+import { PhotoInText } from "@/home/layers";
+import { ChapterText } from "@/home/parts";
+import { KeyAndHand } from "@/home/scenes";
+import { Story } from "@/home/Story";
 import { telLink } from "@/lib/whatsapp";
-import { Drawing } from "@/scene/Drawing";
-import { IsoBuilding } from "@/scene/Iso";
-import {
-  chapters,
-  finishingTags,
-  foundationTags,
-  handoverNote,
-  hero,
-  sustainableTags,
-  type ChapterCopy,
-  type ChapterId,
-} from "@content/home";
-import { tr, type L } from "@content/i18n";
+import { chapters, handoverNote, hero, type ChapterCopy, type ChapterId } from "@content/home";
+import { tr } from "@content/i18n";
 import { addressLines, site, whatsappUrl } from "@content/site";
 import { verifiedTestimonials } from "@content/testimonials";
 import { ui } from "@content/ui";
 
 const byId = Object.fromEntries(chapters.map((c) => [c.id, c])) as Record<ChapterId, ChapterCopy>;
-const index = (id: ChapterId) => chapters.findIndex((c) => c.id === id);
-const words = <T extends Record<string, L>>(o: T) =>
-  Object.fromEntries(Object.entries(o).map(([k, v]) => [k, tr(v)])) as { [K in keyof T]: string };
 
 export default function HomePage() {
   const whatsapp = whatsappUrl(tr(ui.whatsappGreeting));
   const testimonials = verifiedTestimonials();
   const c = byId;
+
+  // The words for each chapter, in story order. The drawings they go with
+  // live on the story stage (src/home/layers.tsx).
+  const texts: Record<ChapterId, React.ReactNode> = {
+    groundbreaking: (
+      <ChapterText copy={c.groundbreaking} as="h1">
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <WhatsAppButton href={whatsapp}>{tr(ui.cta.whatsapp)}</WhatsAppButton>
+          <ButtonLink href="/estimate" variant="outline-light">
+            {tr(ui.cta.estimate)}
+          </ButtonLink>
+        </div>
+        <p className="mt-8">
+          <a href="#start" className="font-medium text-white underline decoration-accent underline-offset-4 hover:text-accent focus-visible:outline-accent">
+            {tr(hero.skip)} <span aria-hidden="true">↓</span>
+          </a>
+        </p>
+        <details className="mt-4 lg:hidden">
+          <summary className="t-tech cursor-pointer text-navy-300 focus-visible:outline-accent">{tr(ui.nav.chapters)}</summary>
+          <ol className="mt-3 space-y-1">
+            {chapters.slice(1).map((ch) => (
+              <li key={ch.id}>
+                <a href={`#${ch.id}`} className="inline-block py-1.5 text-white underline-offset-4 hover:underline">
+                  {tr(ch.nav)}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </details>
+      </ChapterText>
+    ),
+    vastu: (
+      <ChapterText copy={c.vastu}>
+        <FacingControl />
+      </ChapterText>
+    ),
+    planning: (
+      <ChapterText copy={c.planning}>
+        <PlanViewControl />
+        <PhotoInText id="planning" />
+      </ChapterText>
+    ),
+    foundation: (
+      <ChapterText copy={c.foundation}>
+        <PhotoInText id="foundation" />
+      </ChapterText>
+    ),
+    structure: (
+      <ChapterText
+        copy={c.structure}
+        headline={
+          <div data-crane-load="" className="crane-load relative mt-5 inline-block">
+            <span data-crane-cable="" aria-hidden="true" className="crane-cable absolute bottom-full left-1/2 hidden h-[90svh] w-px bg-navy-300 lg:block" />
+            <span aria-hidden="true" className="crane-cable absolute bottom-full left-1/2 hidden h-3 w-3 -translate-x-1/2 bg-navy-300 lg:block" />
+            <h2 className="t-h2 border-2 border-accent bg-primary px-5 py-3 text-white">{tr(c.structure.headline)}</h2>
+          </div>
+        }
+      >
+        <FloorCounter />
+      </ChapterText>
+    ),
+    finishing: <ChapterText copy={c.finishing} />,
+    types: (
+      <ChapterText copy={c.types}>
+        <TypeControl />
+      </ChapterText>
+    ),
+    renovation: (
+      <ChapterText copy={c.renovation}>
+        <RenovationControl />
+      </ChapterText>
+    ),
+    handover: (
+      <ChapterText copy={c.handover}>
+        <p className="t-h2 mt-4 text-accent">{tr(handoverNote)}</p>
+        <KeyAndHand label="A key with a lime tag dropping into an open hand." className="mt-6 h-auto w-[min(50%,200px)]" />
+        <PhotoInText id="handover" />
+      </ChapterText>
+    ),
+    sustainable: (
+      <ChapterText copy={c.sustainable}>
+        <PhotoInText id="sustainable" />
+      </ChapterText>
+    ),
+    start: (
+      <ChapterText copy={c.start}>
+        <div className="mt-8 flex max-w-md flex-col gap-3">
+          <WhatsAppButton href={whatsapp}>{tr(ui.cta.whatsapp)}</WhatsAppButton>
+          <ButtonLink href="/estimate" variant="lime">
+            {tr(ui.cta.estimate)}
+          </ButtonLink>
+          <ButtonLink href={telLink} variant="outline-light">
+            {tr(ui.cta.call)} {site.phone.display}
+          </ButtonLink>
+        </div>
+        <p className="t-tech mt-8 text-navy-300">{addressLines().join(", ")}</p>
+      </ChapterText>
+    ),
+  };
 
   return (
     <div className="relative text-white">
@@ -42,214 +126,10 @@ export default function HomePage() {
         chapters={chapters.map((ch) => ({ id: ch.id, name: tr(ch.nav), sheet: ch.sheet }))}
       />
 
-      {/* 00 Groundbreaking */}
-      <Chapter id="groundbreaking" index={0} length={50} label={tr(c.groundbreaking.nav)} className="chapter-first">
-        <Stage
-          copy={c.groundbreaking}
-          text={
-            <ChapterText copy={c.groundbreaking} as="h1">
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <WhatsAppButton href={whatsapp}>{tr(ui.cta.whatsapp)}</WhatsAppButton>
-                <ButtonLink href="/estimate" variant="outline-light">
-                  {tr(ui.cta.estimate)}
-                </ButtonLink>
-              </div>
-              <p className="mt-8">
-                <a href="#start" className="font-medium text-white underline decoration-accent underline-offset-4 hover:text-accent focus-visible:outline-accent">
-                  {tr(hero.skip)} <span aria-hidden="true">↓</span>
-                </a>
-              </p>
-              <details className="mt-4 lg:hidden">
-                <summary className="t-tech cursor-pointer text-navy-300 focus-visible:outline-accent">{tr(ui.nav.chapters)}</summary>
-                <ol className="mt-3 space-y-1">
-                  {chapters.slice(1).map((ch) => (
-                    <li key={ch.id}>
-                      <a href={`#${ch.id}`} className="inline-block py-1.5 text-white underline-offset-4 hover:underline">
-                        {tr(ch.nav)}
-                      </a>
-                    </li>
-                  ))}
-                </ol>
-              </details>
-            </ChapterText>
-          }
-          scene={<GroundScene label="An empty plot at dawn. Four lime survey stakes mark the corners, string lines run between them, and the Sri Skanda Constructions mark stands on the plot." />}
-        />
-      </Chapter>
-
-      {/* 01 Vastu and planning */}
-      <Chapter id="vastu" index={index("vastu")} length={150} label={tr(c.vastu.nav)}>
-        <VastuChapter copy={c.vastu} />
-      </Chapter>
-
-      {/* 02 Architectural planning */}
-      <Chapter id="planning" index={index("planning")} length={190} label={tr(c.planning.nav)}>
-        <PlanningChapter copy={c.planning} />
-      </Chapter>
-
-      {/* 03 Foundation */}
-      <Chapter id="foundation" index={index("foundation")} length={190} label={tr(c.foundation.nav)}>
-        <Stage
-          copy={c.foundation}
-          text={<ChapterText copy={c.foundation} />}
-          scene={
-            <>
-              {/* footage inside the section cut, seen through the open trench */}
-              <SceneVideo
-                name="construction-site"
-                className="left-[23.75%] top-[41.67%] h-[41.67%] w-[42.5%]"
-                style={{ opacity: "clamp(0, calc((var(--p) - 0.16) * 8), 0.9)" }}
-              />
-              <FoundationScene
-                tags={words(foundationTags)}
-                label="Section through a foundation: a trench in tested soil, a concrete bed, a steel-reinforced footing, a column rising from it, and a plinth beam at ground level."
-              />
-            </>
-          }
-        />
-      </Chapter>
-
-      {/* 04 Structure */}
-      <Chapter id="structure" index={index("structure")} length={220} label={tr(c.structure.nav)}>
-        <Stage
-          copy={c.structure}
-          slot={4}
-          text={
-            <ChapterText
-              copy={c.structure}
-              headline={
-                <div data-crane-load="" className="crane-load relative mt-5 inline-block">
-                  <span data-crane-cable="" aria-hidden="true" className="crane-cable absolute bottom-full left-1/2 hidden h-[90svh] w-px bg-navy-300 lg:block" />
-                  <span aria-hidden="true" className="crane-cable absolute bottom-full left-1/2 hidden h-3 w-3 -translate-x-1/2 bg-navy-300 lg:block" />
-                  <h2 className="t-h2 border-2 border-accent bg-primary px-5 py-3 text-white">{tr(c.structure.headline)}</h2>
-                </div>
-              }
-            >
-              <FloorCounter />
-            </ChapterText>
-          }
-          scene={
-            <>
-              <div data-scene-fallback="" className="absolute inset-0">
-                <IsoBuilding
-                  g={5}
-                  chapter={4}
-                  crane
-                  className={SCENE_SVG}
-                  label="The concrete frame of the house: columns and three floor slabs, with a tower crane behind."
-                />
-              </div>
-            </>
-          }
-        />
-      </Chapter>
-
-      {/* 05 Walls and finishing */}
-      <Chapter id="finishing" index={index("finishing")} length={200} label={tr(c.finishing.nav)}>
-        <Stage
-          copy={c.finishing}
-          text={<ChapterText copy={c.finishing} />}
-          scene={
-            <>
-              <FinishingScene
-                tags={words(finishingTags)}
-                label="One bay of the front wall: brick courses at the bottom, plaster above, white paint at the top, and two windows."
-              />
-              <SceneVideo
-                name="glass-building"
-                className="left-[23.75%] top-[21.67%] z-[2] h-[20.83%] w-[18.75%] border-2 border-primary"
-                style={{ opacity: "clamp(0, calc((var(--p) - 0.9) * 12), 1)" }}
-              />
-            </>
-          }
-        />
-      </Chapter>
-
-      {/* 06 Homes or commercial */}
-      <Chapter id="types" index={index("types")} length={140} label={tr(c.types.nav)}>
-        <TypesChapter copy={c.types} />
-      </Chapter>
-
-      {/* 07 Renovation */}
-      <Chapter id="renovation" index={index("renovation")} length={110} label={tr(c.renovation.nav)}>
-        <Stage copy={c.renovation} text={<ChapterText copy={c.renovation} />} scene={<BeforeAfter />} />
-      </Chapter>
-
-      {/* 08 Turnkey handover */}
-      <Chapter id="handover" index={index("handover")} length={200} label={tr(c.handover.nav)}>
-        <Stage
-          copy={c.handover}
-          slot={8}
-          text={
-            <ChapterText copy={c.handover}>
-              <p className="t-h2 mt-4 text-accent">{tr(handoverNote)}</p>
-              <KeyAndHand label="A key with a lime tag dropping into an open hand." />
-            </ChapterText>
-          }
-          scene={
-            <div data-scene-fallback="" className="absolute inset-0">
-              <IsoBuilding
-                g={8.99}
-                chapter={8}
-                lit="animate"
-                doorOpen="animate"
-                className={SCENE_SVG}
-                label="The finished house at dusk: the front door open and the windows lit, one room after another."
-              />
-            </div>
-          }
-        />
-      </Chapter>
-
-      {/* 09 Sustainable building */}
-      <Chapter id="sustainable" index={index("sustainable")} length={190} label={tr(c.sustainable.nav)}>
-        <Stage
-          copy={c.sustainable}
-          text={<ChapterText copy={c.sustainable} />}
-          scene={
-            <>
-              <SceneVideo
-                name="eco-city"
-                className="left-0 top-0 h-[62%] w-full"
-                style={{ maskImage: "radial-gradient(ellipse 50% 50% at 50% 50%, #000 30%, transparent 72%)" }}
-              />
-              <SustainableScene
-                tags={words(sustainableTags)}
-                label="The house from the road with solar panels on the top roof, a garden on the terrace, and a pipe carrying rainwater down to an underground sump."
-              />
-            </>
-          }
-        />
-      </Chapter>
-
-      {/* 10 Start your project */}
-      <Chapter id="start" index={index("start")} length={90} label={tr(c.start.nav)}>
-        <Stage
-          copy={c.start}
-          slot={10}
-          text={
-            <ChapterText copy={c.start}>
-              <div className="mt-8 flex max-w-md flex-col gap-3">
-                <WhatsAppButton href={whatsapp}>{tr(ui.cta.whatsapp)}</WhatsAppButton>
-                <ButtonLink href="/estimate" variant="lime">
-                  {tr(ui.cta.estimate)}
-                </ButtonLink>
-                <ButtonLink href={telLink} variant="outline-light">
-                  {tr(ui.cta.call)} {site.phone.display}
-                </ButtonLink>
-              </div>
-              <p className="t-tech mt-8 text-navy-300">{addressLines().join(", ")}</p>
-            </ChapterText>
-          }
-          scene={
-            <>
-              <div data-scene-fallback="" className="absolute inset-0">
-                <Drawing name="finished-lit" className={SCENE_SVG} />
-              </div>
-            </>
-          }
-        />
-      </Chapter>
+      <Story
+        chapters={chapters.map((ch) => ({ id: ch.id, label: tr(ch.nav), sheet: ch.sheet }))}
+        texts={chapters.map((ch) => texts[ch.id])}
+      />
 
       {testimonials.length ? (
         <section aria-labelledby="testimonials-title" className="relative bg-surface text-primary">
