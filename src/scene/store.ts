@@ -10,6 +10,8 @@ type Listener = () => void;
 const listeners = new Set<Listener>();
 
 export const story = {
+  /** Story time on the home page: chapter + progress, 0 to 11. */
+  g: 0,
   /** Progress (0 to 1) through each home chapter. */
   progress: new Float32Array(CHAPTER_COUNT).fill(0),
   /** 0 = family home, 1 = commercial block. Eased towards variantTarget. */
