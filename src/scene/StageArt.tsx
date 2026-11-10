@@ -1,15 +1,17 @@
-import { C, IsoBuilding } from "./Iso";
+import { C } from "./iso-core";
+import { Drawing } from "./Drawing";
+import type { DrawingName } from "./drawings";
 import { LAYOUTS, ROOMS, type RoomId } from "@content/vastu";
 import { tr } from "@content/i18n";
 import type { ServiceStage } from "@content/services";
 
 /** Story time and variant shown for each service stage. */
-export const STAGE_VIEW: Record<Exclude<ServiceStage, "plan">, { g: number; variant: "home" | "commercial"; label: string; lit?: boolean; door?: boolean }> = {
-  massing: { g: 3, variant: "home", label: "A white massing model of a three-storey house on its plot." },
-  structure: { g: 5, variant: "home", label: "The concrete frame of a house: columns and three floor slabs." },
-  finished: { g: 6.5, variant: "home", label: "A finished three-storey family home with a terrace." },
-  commercial: { g: 6.5, variant: "commercial", label: "A four-storey commercial block with shopfronts at street level." },
-  handover: { g: 8.99, variant: "home", label: "The finished house at dusk, door open and windows lit.", lit: true, door: true },
+export const STAGE_VIEW: Record<Exclude<ServiceStage, "plan">, { g: number; variant: "home" | "commercial"; drawing: DrawingName }> = {
+  massing: { g: 3, variant: "home", drawing: "massing" },
+  structure: { g: 5, variant: "home", drawing: "structure" },
+  finished: { g: 6.5, variant: "home", drawing: "home" },
+  commercial: { g: 6.5, variant: "commercial", drawing: "commercial" },
+  handover: { g: 8.99, variant: "home", drawing: "home-lit" },
 };
 
 /** A small Vastu plan: nine zones, rooms in their traditional corners. */
@@ -48,10 +50,9 @@ export function VastuPlanArt({ className }: { className?: string }) {
  * The drawing for a service's stage. Where 3D runs, the model takes over
  * the same box (see the data attributes on the slot in PageHero).
  */
-export function StageArt({ stage, className }: { stage: ServiceStage; className?: string }) {
+export function StageArt({ stage, className, eager }: { stage: ServiceStage; className?: string; eager?: boolean }) {
   if (stage === "plan") return <VastuPlanArt className={className} />;
-  const v = STAGE_VIEW[stage];
-  return <IsoBuilding g={v.g} variant={v.variant} lit={v.lit} doorOpen={v.door} className={className} label={v.label} />;
+  return <Drawing name={STAGE_VIEW[stage].drawing} className={className} eager={eager} />;
 }
 
 /** Key plan for the contact page: Saram, the street, the office, north. */

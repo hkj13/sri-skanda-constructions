@@ -1,6 +1,6 @@
 "use client";
 
-import Lenis from "lenis";
+import type Lenis from "lenis";
 import { usePathname, useRouter } from "next/navigation";
 import { startTransition, useEffect, useRef } from "react";
 
@@ -31,20 +31,26 @@ export function SiteMotion() {
   const router = useRouter();
   const pending = useRef<(() => void) | null>(null);
 
-  /* Smooth scroll */
+  /* Smooth scroll, desktop only, loaded on demand so phones never fetch it */
   useEffect(() => {
     if (!canHover() || reducedMotion()) return;
-    const lenis = new Lenis({ duration: 1.05, anchors: true });
-    window.__lenis = lenis;
+    let lenis: Lenis | undefined;
     let raf = 0;
-    const tick = (time: number) => {
-      lenis.raf(time);
+    let cancelled = false;
+    import("lenis").then(({ default: L }) => {
+      if (cancelled) return;
+      lenis = new L({ duration: 1.05, anchors: true });
+      window.__lenis = lenis;
+      const tick = (time: number) => {
+        lenis!.raf(time);
+        raf = requestAnimationFrame(tick);
+      };
       raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
+    });
     return () => {
+      cancelled = true;
       cancelAnimationFrame(raf);
-      lenis.destroy();
+      lenis?.destroy();
       delete window.__lenis;
     };
   }, []);

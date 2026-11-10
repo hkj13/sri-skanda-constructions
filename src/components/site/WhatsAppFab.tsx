@@ -40,6 +40,7 @@ export function WhatsAppFab({ href, label }: { href: string; label: string }) {
   }, [pathname]);
 
   return (
+    <aside aria-label="Quick contact">
     <a
       href={href}
       target="_blank"
@@ -53,5 +54,6 @@ export function WhatsAppFab({ href, label }: { href: string; label: string }) {
     >
       <WhatsAppIcon className="h-8 w-8" />
     </a>
+    </aside>
   );
 }

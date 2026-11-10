@@ -1,8 +1,7 @@
 "use client";
 
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useRef, type ReactNode } from "react";
+import { clamp01, watchScroll } from "@/lib/scroll";
 import { setProgress } from "@/scene/store";
 
 /**
@@ -42,35 +41,35 @@ export function Chapter({
       setProgress(index, 1);
       return;
     }
-    gsap.registerPlugin(ScrollTrigger);
-    const set = (p: number) => {
+    const wide = window.matchMedia("(min-width: 1024px)");
+    let last = -1;
+    const update = () => {
+      const vh = window.innerHeight;
+      let p: number;
+      if (wide.matches) {
+        // Pinned: from the stage sliding in (index 0: from the very top)
+        // until the chapter's bottom reaches the bottom of the screen.
+        const r = el.getBoundingClientRect();
+        const start = index === 0 ? 0 : vh * 0.55;
+        p = (start - r.top) / (r.height - vh + start);
+      } else {
+        // Flowing: while the drawing travels from low on the screen to the middle.
+        const scene = el.querySelector<HTMLElement>("[data-scene]") ?? el;
+        const r = scene.getBoundingClientRect();
+        p = index === 0 ? -r.top / r.height : (vh * 0.88 - r.top) / (vh * 0.46 + r.height / 2);
+      }
+      p = clamp01(p);
+      if (Math.abs(p - last) < 0.0005) return;
+      last = p;
       el.style.setProperty("--p", p.toFixed(4));
       setProgress(index, p);
     };
-    const mm = gsap.matchMedia();
-    mm.add("(min-width: 1024px)", () => {
-      const st = ScrollTrigger.create({
-        trigger: el,
-        // Begin while the stage is still sliding in, so it never arrives empty.
-        start: index === 0 ? "top top" : "top 55%",
-        end: "bottom bottom",
-        onUpdate: (self) => set(self.progress),
-        onRefresh: (self) => set(self.progress),
-      });
-      return () => st.kill();
-    });
-    mm.add("(max-width: 1023.98px)", () => {
-      const scene = el.querySelector<HTMLElement>("[data-scene]") ?? el;
-      const st = ScrollTrigger.create({
-        trigger: scene,
-        start: index === 0 ? "top top" : "top 88%",
-        end: index === 0 ? "bottom top" : "center 42%",
-        onUpdate: (self) => set(self.progress),
-        onRefresh: (self) => set(self.progress),
-      });
-      return () => st.kill();
-    });
-    return () => mm.revert();
+    const stop = watchScroll(update);
+    wide.addEventListener("change", update);
+    return () => {
+      stop();
+      wide.removeEventListener("change", update);
+    };
   }, [index]);
 
   return (

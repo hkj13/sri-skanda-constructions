@@ -1,10 +1,9 @@
 "use client";
 
-import gsap from "gsap";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowIcon } from "@/components/ui/icons";
-import { IsoBuilding } from "@/scene/Iso";
+import { Drawing } from "@/scene/Drawing";
 import { story } from "@/scene/store";
 import { typeLists, type ChapterCopy } from "@content/home";
 import { tr } from "@content/i18n";
@@ -18,10 +17,7 @@ export function TypesChapter({ copy }: { copy: ChapterCopy }) {
   const list = typeLists[kind];
 
   useEffect(() => {
-    const tween = gsap.to(story, { variant: kind === "commercial" ? 1 : 0, duration: 1.1, ease: "power3.inOut" });
-    return () => {
-      tween.kill();
-    };
+    story.variantTarget = kind === "commercial" ? 1 : 0;
   }, [kind]);
 
   const text = (
@@ -67,10 +63,10 @@ export function TypesChapter({ copy }: { copy: ChapterCopy }) {
   const scene = (
     <div data-scene-fallback="" className="absolute inset-0">
       <div className={`absolute inset-0 transition-opacity duration-500 ${kind === "home" ? "opacity-100" : "pointer-events-none opacity-0"}`} aria-hidden={kind !== "home"}>
-        <IsoBuilding g={6.5} className={SCENE_SVG} label="A three-storey family home with a terrace on the plot." />
+        <Drawing name="home" className={SCENE_SVG} />
       </div>
       <div className={`absolute inset-0 transition-opacity duration-500 ${kind === "commercial" ? "opacity-100" : "pointer-events-none opacity-0"}`} aria-hidden={kind !== "commercial"}>
-        <IsoBuilding g={6.5} variant="commercial" className={SCENE_SVG} label="A four-storey commercial block with shopfronts at street level, on the same plot." />
+        <Drawing name="commercial" className={SCENE_SVG} />
       </div>
     </div>
   );

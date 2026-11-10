@@ -414,7 +414,7 @@ function poseFor(g: number, time: number): Pose {
     const orbit = smooth(span(p, 0.42, 1));
     return { az: 35 + orbit * 360, el: lerp(58, 27, smooth(span(p, 0.1, 0.45))), dist: lerp(54, 47, smooth(p)), y: 3.6 };
   }
-  if (c <= 4) return { az: lerp(28, 50, smooth(p)), el: lerp(26, 19, smooth(p)), dist: 52, y: lerp(3, 6, smooth(p)) };
+  if (c <= 4) return { az: lerp(28, 50, smooth(p)), el: lerp(22, 16, smooth(p)), dist: 60, y: lerp(4.5, 7.5, smooth(p)) };
   if (c <= 7) return { az: 43 + Math.sin(time * 0.25) * 3, el: 20, dist: 47, y: 4.6 };
   if (c <= 9) return { az: lerp(52, 66, smooth(p)), el: lerp(17, 11, smooth(p)), dist: lerp(46, 38, smooth(p)), y: 4.2 };
   return { az: 44 + Math.sin(time * 0.2) * 7, el: 22, dist: 48, y: 4.8 };
@@ -431,6 +431,10 @@ function Rig() {
   const shift = useRef(-1);
 
   useFrame((state, dt) => {
+    // Ease the two switches towards where the visitor set them.
+    const ease = 1 - Math.exp(-dt * 3.2);
+    story.plan += (story.planTarget - story.plan) * ease;
+    story.variant += (story.variantTarget - story.variant) * ease;
     const g = view.g;
     const v = view.variant ?? (g >= T.wallsIn ? story.variant : 0);
     const plan = g >= 2 && g < 3 ? story.plan : 0;
@@ -486,7 +490,7 @@ function Rig() {
     // Dusk for the handover, evening for the finished building.
     const dusk = !view.home
       ? g >= 8 ? 0.35 : 0
-      : g >= 10 ? 0.75 : smooth(span(g, 7.9, 8.2)) * (1 - smooth(span(g, 9, 9.4)));
+      : g >= 10 ? 0.55 : smooth(span(g, 7.9, 8.2)) * (1 - smooth(span(g, 9, 9.4)));
     if (key.current) key.current.intensity = lerp(1.9, 0.4, dusk);
     if (fill.current) fill.current.intensity = lerp(1.95, 0.7, dusk);
     if (side.current) side.current.intensity = lerp(0.75, 0.12, dusk);

@@ -78,14 +78,15 @@ export function PlanYourBuild() {
 
   const label = (list: { id: string; label: { en: string } }[], v: string) => tr(list.find((x) => x.id === v)?.label ?? { en: v });
 
+  // Short, plain labels for the WhatsApp message.
   const rows = (): EnquiryRow[] => [
-    [tr(c.steps.type).replace("?", ""), a.type ? label(PROJECT_TYPES, a.type) : ""],
-    [tr(c.plotLocation), a.location],
-    [tr(c.plotSize), a.plotSize],
-    [tr(c.floors), a.floors ? label(FLOOR_OPTIONS, a.floors) : ""],
-    [tr(c.area), a.area ? `${a.area} sq ft` : ""],
-    [tr(c.budget), a.budget ? label(BUDGET_RANGES, a.budget) : ""],
-    [tr(c.timeline), a.timeline ? label(TIMELINES, a.timeline) : ""],
+    ["Project", a.type ? label(PROJECT_TYPES, a.type) : ""],
+    ["Plot location", a.location],
+    ["Plot size", a.plotSize],
+    ["Floors", a.floors ? label(FLOOR_OPTIONS, a.floors) : ""],
+    ["Built-up area", a.area ? `${a.area.replace(/\s*sq\.?\s*ft\.?$/i, "")} sq ft` : ""],
+    ["Budget", a.budget ? label(BUDGET_RANGES, a.budget) : ""],
+    ["Start", a.timeline ? label(TIMELINES, a.timeline) : ""],
     ["Approved plan", a.approvedPlan],
     ["Vastu consultation", a.vastu],
     ["Name", a.name],

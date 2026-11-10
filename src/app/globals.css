@@ -232,6 +232,9 @@ body {
   position: relative;
   width: 100%;
   aspect-ratio: 10 / 9;
+  /* The box's size never depends on its drawing, so the browser can skip
+     drawing it until it is near the screen. */
+  content-visibility: auto;
 }
 @media (min-width: 1024px) {
   .scene-fit {

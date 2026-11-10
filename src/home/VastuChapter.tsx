@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { C, sc } from "@/scene/Iso";
+import { C, sc } from "@/scene/iso-core";
 import type { ChapterCopy } from "@content/home";
 import { tr } from "@content/i18n";
 import {

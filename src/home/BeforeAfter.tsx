@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { C } from "@/scene/Iso";
+import { C } from "@/scene/iso-core";
 import { renovation } from "@content/home";
 import { tr } from "@content/i18n";
 import { Tag } from "./parts";

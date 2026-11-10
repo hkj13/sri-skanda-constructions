@@ -12,10 +12,12 @@ const listeners = new Set<Listener>();
 export const story = {
   /** Progress (0 to 1) through each home chapter. */
   progress: new Float32Array(CHAPTER_COUNT).fill(0),
-  /** 0 = family home, 1 = commercial block. Animated between the two. */
+  /** 0 = family home, 1 = commercial block. Eased towards variantTarget. */
   variant: 0,
-  /** 0 = 3D view, 1 = flat plan view (planning chapter). */
+  variantTarget: 0,
+  /** 0 = 3D view, 1 = flat plan view (planning chapter). Eased towards planTarget. */
   plan: 0,
+  planTarget: 0,
   /** True once the 3D model has drawn a frame. */
   ready: false,
 };

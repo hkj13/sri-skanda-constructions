@@ -1,8 +1,8 @@
 "use client";
 
-import gsap from "gsap";
 import { useEffect, useState } from "react";
-import { C, IsoBuilding, sc } from "@/scene/Iso";
+import { IsoBuilding } from "@/scene/Iso";
+import { C, sc } from "@/scene/iso-core";
 import { story } from "@/scene/store";
 import type { ChapterCopy } from "@content/home";
 import { ChapterText, SCENE_SVG, Stage, Tag } from "./parts";
@@ -72,10 +72,7 @@ export function PlanningChapter({ copy }: { copy: ChapterCopy }) {
   const [view, setView] = useState<"3d" | "2d">("3d");
 
   useEffect(() => {
-    const tween = gsap.to(story, { plan: view === "2d" ? 1 : 0, duration: 0.9, ease: "power3.inOut" });
-    return () => {
-      tween.kill();
-    };
+    story.planTarget = view === "2d" ? 1 : 0;
   }, [view]);
 
   const option = (id: "2d" | "3d", label: string) => (

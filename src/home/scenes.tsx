@@ -1,7 +1,10 @@
+"use client";
+
 import type { CSSProperties } from "react";
 import { BLOCK, VEL } from "@/brand/logo-art";
 import { PLOT } from "@/scene/building";
-import { C, ISO, IsoGround, isoPoint, sc } from "@/scene/Iso";
+import { IsoGround } from "@/scene/Iso";
+import { C, ISO, isoPoint, sc } from "@/scene/iso-core";
 import { SCENE_SVG, Tag } from "./parts";
 
 /**
@@ -105,7 +108,7 @@ export function FoundationScene({ label, tags }: { label: string; tags: { plinth
         <rect x={40} y={ground} width={720} height={380} fill="url(#earth)" />
       </g>
       {/* the trench, dug down from ground level */}
-      <rect x={cxm - 170} y={ground} width={340} height={300} fill={C.navy} className="sc-fall" style={sc(0.08, 0.24)} />
+      <rect x={cxm - 170} y={ground} width={340} height={300} fill={C.navy} fillOpacity={0.55} className="sc-fall" style={sc(0.08, 0.24)} />
       <path d={`M40 ${ground}H760`} pathLength={1} stroke={C.white} strokeWidth={2.5} className="sc-draw" style={sc(0, 0.1)} />
       {/* PCC bed */}
       <rect x={cxm - 150} y={ground + 276} width={300} height={24} fill={C.gray400} stroke={C.navy} className="sc" style={sc(0.24, 0.32, -30)} />
@@ -157,20 +160,21 @@ export function FinishingScene({ label, tags }: { label: string; tags: { brick: 
   const H = 480;
   const rows = 16;
   const rh = H / rows;
+  // One rectangle per course, filled with a brick pattern; alternate
+  // courses use a pattern shifted by half a brick.
   const bricks = Array.from({ length: rows }, (_, r) => {
     const row = rows - 1 - r; // lay from the bottom up
-    const y = Y + row * rh;
-    const off = row % 2 ? 0 : -30;
-    const cells = [];
-    for (let x = off; x < W; x += 60) {
-      const bx = Math.max(0, x);
-      const bw = Math.min(x + 56, W) - bx;
-      if (bw > 4) cells.push(<rect key={x} x={X + bx} y={y + 2} width={bw} height={rh - 4} fill={C.gray300} />);
-    }
     return (
-      <g key={r} className="sc" style={sc(0.02 + r * 0.022, 0.07 + r * 0.022, -14)}>
-        {cells}
-      </g>
+      <rect
+        key={r}
+        x={X}
+        y={Y + row * rh}
+        width={W}
+        height={rh}
+        fill={`url(#brick-${row % 2})`}
+        className="sc"
+        style={sc(0.02 + r * 0.022, 0.07 + r * 0.022, -14)}
+      />
     );
   });
   const win = (x: number, t: number, video?: boolean) => (
@@ -183,6 +187,13 @@ export function FinishingScene({ label, tags }: { label: string; tags: { brick: 
   );
   return (
     <svg viewBox={VB} className={SCENE_SVG} role="img" aria-label={label} preserveAspectRatio="xMidYMid meet">
+      <defs>
+        {[0, 1].map((n) => (
+          <pattern key={n} id={`brick-${n}`} width={60} height={rh} patternUnits="userSpaceOnUse" x={X + (n ? 0 : -30)} y={Y}>
+            <rect x={2} y={2} width={56} height={rh - 4} fill={C.gray300} />
+          </pattern>
+        ))}
+      </defs>
       <rect x={X} y={Y} width={W} height={H} fill={C.navy950} />
       {bricks}
       {/* plaster over the upper wall */}

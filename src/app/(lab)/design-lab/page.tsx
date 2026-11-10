@@ -236,7 +236,7 @@ export default function DesignLabPage() {
               ["Colour additions", "Five navy tints and shades and one cool gray scale, all on the navy hue. No new hues."],
               ["3D where it earns it", "react-three-fiber for the massing, structure, home and commercial morph, handover and final scene. Plans, sections and elevations stay as SVG drawings."],
               ["Chapters as drawing sheets", "Each chapter carries a small title block (sheet number, drawing name, scale) like a real drawing set, and the right-hand rail is the sheet index."],
-              ["New libraries", "three, @react-three/fiber, @react-three/drei, gsap with ScrollTrigger, lenis. React ViewTransition (experimental flag in Next 16) for the laser-line route change."],
+              ["Libraries", "three, @react-three/fiber and @react-three/drei for the model, lenis for desktop smooth scroll. Scroll choreography is a small native scroll loop and the laser-line change uses the browser View Transitions API directly (GSAP was tried and dropped to keep phones fast)."],
             ].map(([title, body]) => (
               <li key={title} className="rounded-lg bg-surface p-6">
                 <h3 className="text-xl font-medium text-primary">{title}</h3>

@@ -79,7 +79,7 @@ export function PageHero({
                 {stage === "location" ? (
                   <LocationArt className="absolute inset-0 h-full w-full" />
                 ) : (
-                  <StageArt stage={stage} className="absolute inset-0 h-full w-full" />
+                  <StageArt stage={stage} eager className="absolute inset-0 h-full w-full" />
                 )}
               </div>
             </div>

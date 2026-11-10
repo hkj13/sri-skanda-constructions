@@ -8,6 +8,7 @@ import { FinishingScene, FoundationScene, GroundScene, KeyAndHand, SustainableSc
 import { TypesChapter } from "@/home/TypesChapter";
 import { VastuChapter } from "@/home/VastuChapter";
 import { telLink } from "@/lib/whatsapp";
+import { Drawing } from "@/scene/Drawing";
 import { IsoBuilding } from "@/scene/Iso";
 import {
   chapters,
@@ -93,10 +94,11 @@ export default function HomePage() {
           text={<ChapterText copy={c.foundation} />}
           scene={
             <>
+              {/* footage inside the section cut, seen through the open trench */}
               <SceneVideo
                 name="construction-site"
-                className="left-[5%] top-[8%] h-[33.5%] w-[90%]"
-                style={{ maskImage: "linear-gradient(transparent, #000 45%)", opacity: "clamp(0, calc((var(--p) - 0.05) * 6), 1)" }}
+                className="left-[23.75%] top-[41.67%] h-[41.67%] w-[42.5%]"
+                style={{ opacity: "clamp(0, calc((var(--p) - 0.16) * 8), 0.9)" }}
               />
               <FoundationScene
                 tags={words(foundationTags)}
@@ -208,8 +210,8 @@ export default function HomePage() {
             <>
               <SceneVideo
                 name="eco-city"
-                className="left-0 top-[3%] h-[52%] w-full"
-                style={{ maskImage: "linear-gradient(#000 55%, transparent)" }}
+                className="left-0 top-0 h-[62%] w-full"
+                style={{ maskImage: "radial-gradient(ellipse 50% 50% at 50% 50%, #000 30%, transparent 72%)" }}
               />
               <SustainableScene
                 tags={words(sustainableTags)}
@@ -242,13 +244,7 @@ export default function HomePage() {
           scene={
             <>
               <div data-scene-fallback="" className="absolute inset-0">
-                <IsoBuilding
-                  g={10.9}
-                  lit
-                  doorOpen
-                  className={SCENE_SVG}
-                  label="The finished house, lit, with solar panels on the roof and a garden on the terrace."
-                />
+                <Drawing name="finished-lit" className={SCENE_SVG} />
               </div>
             </>
           }

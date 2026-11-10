@@ -37,13 +37,13 @@ export default function ProcessPage() {
           {processStages.map((s, n) => (
             <li
               key={s.id}
-              className="relative border-l-2 border-secondary pb-12 pl-8 last:pb-0 lg:w-[clamp(20rem,27vw,30rem)] lg:shrink-0 lg:border-l-0 lg:pb-0 lg:pl-0"
+              className="relative border-l-2 border-secondary pb-12 pl-8 last:pb-0 lg:border-l-0 lg:pb-0 lg:pl-0 group-data-[pinned]/tl:w-[clamp(20rem,27vw,30rem)] group-data-[pinned]/tl:shrink-0"
             >
-              <span aria-hidden="true" className="absolute -left-[9px] top-1 z-[1] h-4 w-4 rounded-full border-2 border-accent bg-primary lg:relative lg:left-0 lg:top-0 lg:mb-8 lg:block" />
+              <span aria-hidden="true" className="absolute -left-[9px] top-1 z-[1] h-4 w-4 rounded-full border-2 border-accent bg-primary lg:hidden group-data-[pinned]/tl:relative group-data-[pinned]/tl:left-0 group-data-[pinned]/tl:top-0 group-data-[pinned]/tl:mb-8 group-data-[pinned]/tl:block" />
               <p className="t-tech text-navy-300">
                 {tr(ui.process.stage)} {String(n + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
               </p>
-              <div className="mt-4 rounded-lg bg-secondary/70 p-6 ring-1 ring-navy-700 lg:min-h-[26rem] lg:p-8">
+              <div className="mt-4 h-[calc(100%-2rem)] rounded-lg bg-secondary/70 p-6 ring-1 ring-navy-700 lg:p-8 group-data-[pinned]/tl:h-auto group-data-[pinned]/tl:min-h-[26rem]">
                 <StageIcon id={s.id} className="h-14 w-14 text-accent" />
                 <h3 className="t-h3 mt-6">{tr(s.title)}</h3>
                 <p className="mt-3 text-white/90">{tr(s.body)}</p>
