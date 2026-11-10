@@ -4,6 +4,7 @@
   --background: #ffffff;
   --foreground: #1a2340;
   --primary: #1a2340;
+  --secondary: #2a3660;
   --accent: #d8f060;
   --accent-light: #e8f5a0;
   --surface: #eef8c4;
@@ -13,11 +14,11 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
   --color-accent: var(--accent);
   --color-accent-light: var(--accent-light);
   --color-surface: var(--surface);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-jost);
 }
 
 body {
@@ -44,4 +45,16 @@ html {
 .reveal.revealed {
   opacity: 1 !important;
   transform: none !important;
+}
+
+/* ── Logo lettering colours ──
+   The logo artwork lives once in an SVG sprite. These classes, set on each
+   <svg> by the Logo component, colour the lettering for the ground it is on. */
+.logo-dark {
+  --logo-text: #ffffff;
+  --logo-sub: var(--accent);
+}
+.logo-mono {
+  --logo-text: currentColor;
+  --logo-sub: currentColor;
 }
