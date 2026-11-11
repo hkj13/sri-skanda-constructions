@@ -41,12 +41,12 @@ export type Service = {
 
 export const services: Service[] = [
   {
-    slug: "house-construction-pondicherry",
+    slug: "house-construction",
     name: en("Residential construction"),
-    title: en("House construction in Pondicherry"),
+    title: en("House construction: custom homes, villas and apartments"),
     summary: en("Custom homes, villas and apartments, built from foundation to finishing."),
     intro: [
-      en("We build custom homes, villas and apartment buildings in and around Pondicherry. You bring the plot and what your family needs. We plan it with you, draw it, and build it."),
+      en("We build custom homes, villas and apartment buildings in Pondicherry and Hyderabad. You bring the plot and what your family needs. We plan it with you, draw it, and build it."),
       en("If Vastu matters to you, it is part of the plan from the first drawing, not something fitted in afterwards."),
     ],
     included: [
@@ -71,7 +71,7 @@ export const services: Service[] = [
     timeline: null,
     faqs: [
       {
-        q: en("How much does it cost to build a house in Pondicherry?"),
+        q: en("How much does it cost to build a house?"),
         a: en("It depends on the built-up area, the number of floors, the soil and the finish you choose. Send us your details on the estimate page and we will give you a quote after a site visit."),
       },
       {
@@ -92,9 +92,9 @@ export const services: Service[] = [
     cta: en("Ask about your house on WhatsApp"),
   },
   {
-    slug: "commercial-construction-pondicherry",
+    slug: "commercial-construction",
     name: en("Commercial construction"),
-    title: en("Commercial construction in Pondicherry"),
+    title: en("Commercial construction: offices, shops and showrooms"),
     summary: en("Offices, retail spaces, showrooms and commercial complexes."),
     intro: [
       en("We build offices, retail spaces, showrooms and commercial complexes. A commercial building has to earn its keep, so we start with how you will use it: frontage, parking, floor loads, and how customers and staff move through it."),
@@ -140,7 +140,7 @@ export const services: Service[] = [
   {
     slug: "vastu-consultation",
     name: en("Vastu consultation"),
-    title: en("Vastu consultation in Pondicherry"),
+    title: en("Vastu consultation: planned in from the first drawing"),
     summary: en("Vastu-compliant designs for homes and commercial buildings."),
     intro: [
       en("Vastu is about direction: which way the plot faces, where you enter, and where each room sits. It is far easier to get right on paper than after the walls are up, so we bring it in at the planning stage."),
@@ -229,7 +229,7 @@ export const services: Service[] = [
   {
     slug: "renovation-remodeling",
     name: en("Renovation and remodeling"),
-    title: en("Renovation and remodeling in Pondicherry"),
+    title: en("Renovation and remodeling: repair, rework or extend"),
     summary: en("Repair, rework or extend the building you already have."),
     intro: [
       en("Not every project starts with an empty plot. If your house or shop is showing its age, or no longer fits the way you live or work, we renovate and remodel existing buildings."),
@@ -306,7 +306,7 @@ export const services: Service[] = [
         a: en("The whole build, from foundation to finishing. The exact list is written into the agreement and bill of quantities, so you know what is covered before work starts."),
       },
       {
-        q: en("Is turnkey right for me if I live outside Pondicherry?"),
+        q: en("Is turnkey right for me if I live far from the site?"),
         a: en("It suits anyone who cannot be on site every day, because one team is answerable for the whole job."),
       },
       {

@@ -234,7 +234,7 @@ and the brand sheet, to `public/brand`.
 - Every page has its own title, description and share image.
 - `sitemap.xml` and `robots.txt` are generated. `/api` is excluded.
 - Structured data (JSON-LD): the business as a `GeneralContractor` with full address, phone, area served, opening hours and coordinates (once supplied), and its services; each service page adds `Service` and `FAQPage` data.
-- Service pages are written for local searches such as "house construction in Pondicherry", with genuinely useful answers rather than keyword lists.
+- Service pages answer the questions people actually search for, with genuinely useful answers rather than keyword lists. Their headings name the service only; the two markets (Pondicherry and Hyderabad) are named in the text.
 
 ---
 

@@ -106,7 +106,7 @@ export const chapters: ChapterCopy[] = [
     sheet: "S-301",
     drawing: "FRAME",
     scale: "1:100",
-    service: "house-construction-pondicherry",
+    service: "house-construction",
   },
   {
     id: "finishing",
@@ -188,12 +188,12 @@ export const typeLists: Record<"home" | "commercial", { label: L; items: L[]; se
   home: {
     label: en("Home"),
     items: [en("Custom homes"), en("Villas"), en("Apartments")],
-    service: "house-construction-pondicherry",
+    service: "house-construction",
   },
   commercial: {
     label: en("Commercial"),
     items: [en("Offices"), en("Retail spaces"), en("Showrooms"), en("Commercial complexes")],
-    service: "commercial-construction-pondicherry",
+    service: "commercial-construction",
   },
 };
 

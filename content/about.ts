@@ -44,7 +44,7 @@ export const about = {
     },
   ] as { title: L; body: L; image: string; alt: L }[],
   baseTitle: en("Where to find us"),
-  base: en("We work from Saram, in the heart of Pondicherry. Come by, or ask us to visit your plot."),
+  base: en("Our office is in Saram, in the heart of Pondicherry. Come by, or ask us to visit your plot."),
 
   /**
    * Founder and team. Shown only when the list has entries.
