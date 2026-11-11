@@ -10,10 +10,10 @@ import { en, type L } from "./i18n";
  *   "Homes and businesses, built in Pondicherry."
  */
 export const hero = {
-  eyebrow: en("Builders in Pondicherry"),
+  eyebrow: en("Saram, Pondicherry"),
   headline: en("From the first stake to the house key."),
   sub: en(
-    "Residential and commercial construction in Pondicherry. Planned with Vastu, built by one team from foundation to finishing.",
+    "Residential and commercial construction from Saram, Pondicherry. Planned with Vastu, built by one team from foundation to finishing.",
   ),
   skip: en("Skip the story"),
 };

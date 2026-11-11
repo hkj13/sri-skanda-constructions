@@ -312,7 +312,7 @@ function ogSvg(title: string[] | null): string {
         tracking: 0.18,
         fill: LIME,
       }) +
-      text("Pondicherry, India", 1120, 540, {
+      text("Saram, Pondicherry", 1120, 540, {
         size: 24,
         fill: WHITE,
         anchor: "end",

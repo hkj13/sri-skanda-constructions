@@ -10,13 +10,13 @@ import type { L } from "./i18n";
  *
  * Example:
  *   {
- *     slug: "villa-in-pondicherry",
+ *     slug: "villa-in-saram",
  *     title: { en: "Four-bedroom villa" },
  *     type: "residential",
- *     location: { en: "Pondicherry" },
+ *     location: { en: "Saram, Pondicherry" },
  *     size: { en: "2,400 sq ft, G+1" },
  *     status: "completed",
- *     photos: [{ src: "/projects/villa-in-pondicherry/front.jpg", alt: { en: "Front of the finished villa" }, width: 1600, height: 1067 }],
+ *     photos: [{ src: "/projects/villa-in-saram/front.jpg", alt: { en: "Front of the finished villa" }, width: 1600, height: 1067 }],
  *     story: { en: "A short, true paragraph about the project." },
  *   }
  */

@@ -1,7 +1,7 @@
 # Sri Skanda Constructions website
 
 The website of Sri Skanda Constructions, a residential and commercial
-builder from Pondicherry: [sriskandaconstructions.com](https://www.sriskandaconstructions.com).
+builder in Saram, Pondicherry: [sriskandaconstructions.com](https://www.sriskandaconstructions.com).
 
 The home page tells one story, **Blueprint to Building**: a single house is
 built as you scroll, from survey stakes on an empty plot to the key in your

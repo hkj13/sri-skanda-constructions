@@ -22,7 +22,7 @@ const dmMono = DM_Mono({
 
 const TITLE = "Sri Skanda Constructions | House and commercial construction in Pondicherry";
 const DESCRIPTION =
-  "Residential and commercial builder in Pondicherry. Custom homes, villas, apartments, offices and showrooms, planned with Vastu and built from foundation to finishing.";
+  "Residential and commercial builder in Saram, Pondicherry. Custom homes, villas, apartments, offices and showrooms, planned with Vastu and built from foundation to finishing.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),

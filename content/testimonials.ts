@@ -14,7 +14,7 @@ import { en, type L } from "./i18n";
 export type Testimonial = {
   name: string;
   quote: L;
-  /** e.g. "Home owner, Pondicherry". Optional. */
+  /** e.g. "Home owner, Saram". Optional. */
   context?: L;
   verified: boolean;
 };
