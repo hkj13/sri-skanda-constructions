@@ -224,7 +224,7 @@ function Ground() {
   return (
     <group>
       <lineSegments geometry={grid}>
-        <lineBasicMaterial color="#2f3f74" transparent opacity={0.75} />
+        <lineBasicMaterial color="#2f3f74" transparent opacity={0.4} />
       </lineSegments>
       <lineSegments geometry={boundary}>
         <lineBasicMaterial color="#d8f060" />
@@ -306,7 +306,8 @@ function Crane() {
 
     // The point at jib height that sits straight above the resting place.
     const full = size.width;
-    const ndcX = ((slotX + view.shift * full) / full) * 2 - 1;
+    // (The camera's projection already includes the sideways view offset.)
+    const ndcX = (slotX / full) * 2 - 1;
     tmp.set(ndcX, 0.6, 0.5).unproject(camera);
     ray.origin.copy(camera.position);
     ray.direction.copy(tmp).sub(camera.position).normalize();
@@ -326,7 +327,7 @@ function Crane() {
     // Screen positions of the trolley and of the hook hanging below it.
     const project = (v: THREE.Vector3) => {
       v.project(camera);
-      return { x: ((v.x + 1) / 2) * full - view.shift * full, y: ((1 - v.y) / 2) * size.height };
+      return { x: ((v.x + 1) / 2) * full, y: ((1 - v.y) / 2) * size.height };
     };
     trolley.current.getWorldPosition(tmp);
     const top = project(tmp.clone());
@@ -352,10 +353,12 @@ function Crane() {
         c.style.transform = `translateX(-50%) rotate(${rot.toFixed(2)}deg)`;
       }
     });
-    // The model's own cable shows only once the load is set down.
-    const free = released ? smooth(span(p, 0.56, 0.7)) : 0;
+    // The model's own cable shows once the load is set down and the rope
+    // that carried it has let go, so there is only ever one rope.
+    const letGo = p >= 0.62;
+    const free = letGo ? smooth(span(p, 0.62, 0.76)) : 0;
     if (cable.current && hook.current) {
-      cable.current.visible = hook.current.visible = released;
+      cable.current.visible = hook.current.visible = letGo;
       const l = lerp(hang, 1.6, free);
       cable.current.scale.set(0.05, l, 0.05);
       cable.current.position.y = -l / 2;
