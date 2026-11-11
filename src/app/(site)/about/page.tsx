@@ -58,7 +58,6 @@ export default function AboutPage() {
             </li>
           ))}
         </ul>
-        <p className="t-small mt-12 text-gray-600">Photographs are stock images, used until project photos are ready.</p>
       </Band>
 
       {about.team.length ? (
