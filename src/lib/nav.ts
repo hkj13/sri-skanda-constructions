@@ -6,6 +6,7 @@ import { ui } from "@content/ui";
 /** Menu links. Projects and Packages appear only once they have content. */
 export function navItems(): { href: string; label: string }[] {
   return [
+    { href: "/", label: tr(ui.nav.home) },
     { href: "/services", label: tr(ui.nav.services) },
     { href: "/process", label: tr(ui.nav.process) },
     ...(projects.length ? [{ href: "/projects", label: tr(ui.nav.projects) }] : []),

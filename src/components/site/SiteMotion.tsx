@@ -97,7 +97,16 @@ export function SiteMotion() {
       if (!a || a.target === "_blank" || a.hasAttribute("download")) return;
       const url = new URL(a.href, window.location.href);
       if (url.origin !== window.location.origin) return;
-      if (url.pathname === window.location.pathname) return;
+      if (url.pathname === window.location.pathname) {
+        // A link to the page you are on (the logo or Home on the home page)
+        // goes back to the top of it.
+        if (!url.hash) {
+          e.preventDefault();
+          if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true, force: true });
+          else window.scrollTo(0, 0);
+        }
+        return;
+      }
       if (/\.[a-z0-9]{2,5}$/i.test(url.pathname)) return;
       if (!("startViewTransition" in document) || reducedMotion()) return;
 
