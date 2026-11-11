@@ -341,13 +341,14 @@ body {
   position: relative;
   pointer-events: none;
   --p: 1;
-  /* Phones: each text gets a good stretch of scrolling under the stage. */
-  min-height: calc((100svh - var(--stage-h)) * 1.5);
-  padding-block: 2.5rem 4rem;
+  /* Phones: the texts follow each other with ordinary spacing, and each
+     drawing plays while its own text scrolls past, so there is never an
+     empty stretch between chapters. */
+  padding-block: 1.75rem 2.75rem;
   scroll-margin-top: var(--stage-h);
 }
 .story-chapter:first-of-type {
-  padding-top: calc(var(--stage-h) + 1.75rem);
+  padding-top: calc(var(--stage-h) + 1.5rem);
   scroll-margin-top: 0;
 }
 .story-text {
@@ -389,7 +390,6 @@ body {
        their own chapter. */
     overflow: clip;
     height: var(--len);
-    min-height: 0;
     padding-block: 0;
     scroll-margin-top: 0;
   }
