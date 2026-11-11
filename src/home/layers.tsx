@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { Drawing } from "@/scene/Drawing";
 import { IsoBuilding } from "@/scene/Iso";
@@ -10,7 +11,7 @@ import {
   chapters,
   finishingTags,
   foundationTags,
-  storyFilms,
+  storyMedia,
   sustainableTags,
   type ChapterId,
 } from "@content/home";
@@ -395,33 +396,41 @@ function TypesVisual() {
   );
 }
 
-/* ── Site films on the drawing sheet ────────────────────────────────── */
+/* ── Site films and photographs on the drawing sheet ────────────────── */
 
 const WIDE = "(min-width: 1024px)";
 const NARROW = "(max-width: 1023.98px)";
 const chapterOf = (id: ChapterId) => chapters.findIndex((c) => c.id === id);
 
+function Caption({ children, tone = "text-white" }: { children: ReactNode; tone?: string }) {
+  return (
+    <figcaption className={`t-tech mt-2.5 flex items-start gap-2 text-[11px] leading-snug ${tone}`}>
+      <span aria-hidden="true" className="mt-[3px] h-2 w-2 shrink-0 bg-accent" />
+      {children}
+    </figcaption>
+  );
+}
+
 /**
- * A short site film pinned to the drawing sheet, like a reference print,
- * playing while its chapter is on the stage. Wide screens only; phones get
- * the same clip under the chapter text (FilmInText).
+ * The chapter's film or photograph pinned to the drawing sheet, like a
+ * reference print. A film plays while its chapter is on the stage. Wide
+ * screens only; phones get the same thing under the headline (MediaInText).
  */
-function SiteFilm({ id, style, t0 = 0.2 }: { id: ChapterId; style: CSSProperties; t0?: number }) {
-  const film = storyFilms[id]!;
-  const portrait = film.orientation === "portrait";
+function Pinned({ id, style, t0 = 0.2 }: { id: ChapterId; style: CSSProperties; t0?: number }) {
+  const m = storyMedia[id]!;
+  const frame = "relative overflow-hidden bg-navy-700 ring-1 ring-white/70 shadow-[0_24px_48px_-16px_rgb(7_11_24/0.85)]";
   return (
     <figure className="sc absolute z-[3] hidden lg:block" style={{ ...sc(t0, t0 + 0.14, 30), ...style }}>
-      <div
-        className={`relative overflow-hidden bg-navy-700 ring-1 ring-white/70 shadow-[0_24px_48px_-16px_rgb(7_11_24/0.85)] ${
-          portrait ? "aspect-[9/16]" : "aspect-video"
-        }`}
-      >
-        <SceneVideo name={film.video} chapter={chapterOf(id)} media={WIDE} className="story-film-clip inset-0" />
-      </div>
-      <figcaption className="t-tech mt-2.5 flex items-start gap-2 text-[11px] leading-snug text-white">
-        <span aria-hidden="true" className="mt-[3px] h-2 w-2 shrink-0 bg-accent" />
-        {tr(film.caption)}
-      </figcaption>
+      {m.kind === "film" ? (
+        <div className={`${frame} ${m.orientation === "portrait" ? "aspect-[9/16]" : "aspect-video"}`}>
+          <SceneVideo name={m.video} chapter={chapterOf(id)} media={WIDE} className="story-film-clip inset-0" />
+        </div>
+      ) : (
+        <div className={`${frame} aspect-[3/2]`}>
+          <Image src={m.src} alt="" fill sizes="(min-width: 1536px) 380px, 280px" quality={75} className="story-film-clip object-cover" />
+        </div>
+      )}
+      <Caption>{tr(m.caption)}</Caption>
     </figure>
   );
 }
@@ -459,6 +468,7 @@ function scene(i: number): ReactNode {
       return (
         <>
           <PlanningVisual />
+          <Pinned id="planning" style={{ left: "0%", top: "1%", width: "25%" }} t0={0.3} />
         </>
       );
     case 3:
@@ -468,13 +478,13 @@ function scene(i: number): ReactNode {
             tags={words(foundationTags)}
             label="Section through a foundation: a trench in tested soil, a concrete bed, a steel-reinforced footing, a column rising from it, and a plinth beam at ground level."
           />
-          <SiteFilm id="foundation" style={{ left: "2%", top: "2%", width: "38%" }} t0={0.3} />
+          <Pinned id="foundation" style={{ left: "2%", top: "2%", width: "38%" }} t0={0.3} />
         </>
       );
     case 4:
       return (
         <>
-          <SiteFilm id="structure" style={{ left: "72%", top: "5%", width: "15%" }} t0={0.12} />
+          <Pinned id="structure" style={{ left: "72%", top: "5%", width: "15%" }} t0={0.12} />
           <div data-scene-fallback="" className="absolute inset-0">
             <IsoBuilding
               g={5}
@@ -513,7 +523,12 @@ function scene(i: number): ReactNode {
         </>
       );
     case 6:
-      return <TypesVisual />;
+      return (
+        <>
+          <TypesVisual />
+          <Pinned id="types" style={{ left: "0%", top: "1%", width: "23%" }} t0={0.16} />
+        </>
+      );
     case 7:
       return <RenovationStage />;
     case 8:
@@ -529,6 +544,7 @@ function scene(i: number): ReactNode {
               label="The finished house at dusk: the front door open and the windows lit, one room after another."
             />
           </div>
+          <Pinned id="handover" style={{ left: "0%", top: "1%", width: "24%" }} t0={0.22} />
         </>
       );
     case 9:
@@ -538,13 +554,13 @@ function scene(i: number): ReactNode {
             tags={words(sustainableTags)}
             label="The house from the road with solar panels on the top roof, a garden on the terrace, and a pipe carrying rainwater down to an underground sump."
           />
-          <SiteFilm id="sustainable" style={{ left: "70.5%", top: "34%", width: "23%" }} t0={0.46} />
+          <Pinned id="sustainable" style={{ left: "70.5%", top: "34%", width: "23%" }} t0={0.46} />
         </>
       );
     default:
       return (
         <>
-          <SiteFilm id="start" style={{ left: "0%", top: "1%", width: "30%" }} t0={0.12} />
+          <Pinned id="start" style={{ left: "0%", top: "1%", width: "30%" }} t0={0.12} />
           <div data-scene-fallback="" className="absolute inset-0">
             <Drawing name="finished-lit" className={SCENE_SVG} />
           </div>
@@ -584,25 +600,45 @@ export function StageLayers() {
   );
 }
 
-/** The chapter's site film under its text, on phones and tablets. */
-export function FilmInText({ id }: { id: ChapterId }) {
-  const film = storyFilms[id];
-  if (!film) return null;
-  const portrait = film.orientation === "portrait";
+/**
+ * The chapter's film or photograph inside the text column. On phones and
+ * tablets it comes straight after the headline, at full width, so it shares
+ * the screen with the drawing above. With `desktop` it also shows in the
+ * text column on wide screens that are tall enough (for chapters whose
+ * drawing leaves no room to pin it).
+ */
+export function MediaInText({ id, desktop = false }: { id: ChapterId; desktop?: boolean }) {
+  const m = storyMedia[id];
+  if (!m) return null;
+  const show = desktop
+    ? "hidden max-w-[22rem] lg:block [@media(max-height:859px)]:lg:hidden"
+    : "max-w-[28rem] lg:hidden";
+  const frame = "relative overflow-hidden bg-navy-700 ring-1 ring-white/40";
   return (
-    <figure className="mt-8 max-w-[28rem] lg:hidden">
-      {/* An upright clip fills the same width as the others, cropped to 4:5 around its subject. */}
-      <div className={`relative overflow-hidden bg-navy-700 ring-1 ring-white/40 ${portrait ? "aspect-[4/5]" : "aspect-video"}`}>
-        <SceneVideo
-          name={film.video}
-          media={NARROW}
-          className={`inset-0 ${portrait ? "[&>img]:object-[50%_62%] [&>video]:object-[50%_62%]" : ""}`}
-        />
-      </div>
-      <figcaption className="t-tech mt-2.5 flex items-start gap-2 text-[11px] leading-snug text-navy-300">
-        <span aria-hidden="true" className="mt-[3px] h-2 w-2 shrink-0 bg-accent" />
-        {tr(film.caption)}
-      </figcaption>
+    <figure className={`mt-6 ${show}`}>
+      {m.kind === "film" ? (
+        // An upright clip fills the same width as the others, cropped square around its subject.
+        <div className={`${frame} ${m.orientation === "portrait" ? "aspect-square" : "aspect-video"}`}>
+          <SceneVideo
+            name={m.video}
+            media={NARROW}
+            className={`inset-0 ${m.orientation === "portrait" ? "[&>img]:object-[50%_54%] [&>video]:object-[50%_54%]" : ""}`}
+          />
+        </div>
+      ) : (
+        <div className={`${frame} aspect-video`}>
+          <Image
+            src={m.src}
+            alt={tr(m.alt)}
+            fill
+            // A little under the real width on phones: a 2x image is sharp enough and half the weight.
+            sizes="(min-width: 1024px) 22rem, (min-width: 640px) 28rem, 70vw"
+            quality={60}
+            className="object-cover"
+          />
+        </div>
+      )}
+      <Caption tone="text-navy-300">{tr(m.caption)}</Caption>
     </figure>
   );
 }

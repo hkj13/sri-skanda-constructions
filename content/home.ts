@@ -239,37 +239,80 @@ export const renovation: {
   photos: null,
 };
 
-export type StoryFilm = {
-  /** Clip name in public/videos (name.webm, name.mp4 and the still name.jpg). */
-  video: string;
-  /** Shape of the clip. */
-  orientation: "landscape" | "portrait";
-  caption: L;
-};
+export type StoryMedia = { caption: L } & (
+  | {
+      kind: "film";
+      /** Clip name in public/videos (name.webm, name.mp4 and the still name.jpg). */
+      video: string;
+      orientation: "landscape" | "portrait";
+    }
+  | { kind: "photo"; src: string; alt: L }
+);
 
 /**
- * Site films in the home story: one stock clip per chapter where it fits
- * (see CREDITS.md), framed beside the drawing on wide screens and under the
- * chapter text on phones. The stock photos stay on the About page only.
- * TODO(client): replace each clip with footage from a real site.
+ * One site film or photograph for every chapter after the opening. On
+ * phones it sits straight under the chapter's headline; on wide screens it
+ * is pinned beside the drawing where there is room. All of it is stock
+ * (see CREDITS.md), and none of it repeats the About page.
+ * TODO(client): replace each one with footage or a photo from a real site.
  */
-export const storyFilms: Partial<Record<ChapterId, StoryFilm>> = {
+export const storyMedia: Partial<Record<ChapterId, StoryMedia>> = {
+  vastu: {
+    kind: "photo",
+    src: "/images/plan-pencil.jpg",
+    alt: en("A pencil resting on a dimensioned building plan"),
+    caption: en("Every room is placed on the plan first"),
+  },
+  planning: {
+    kind: "photo",
+    src: "/images/plan-drawing.jpg",
+    alt: en("Hands drawing a floor plan with a scale rule"),
+    caption: en("Drawn and agreed before work starts"),
+  },
   foundation: {
+    kind: "film",
     video: "construction-site",
     orientation: "landscape",
     caption: en("Steel is tied and checked before the pour"),
   },
   structure: {
+    kind: "film",
     video: "iron-worker",
     orientation: "portrait",
     caption: en("Props hold each slab until it can stand on its own"),
   },
+  finishing: {
+    kind: "photo",
+    src: "/images/paint-roller.jpg",
+    alt: en("A paint roller laying a band of paint on a white wall"),
+    caption: en("Paint goes on last, over finished plaster"),
+  },
+  types: {
+    kind: "photo",
+    src: "/images/site-team.jpg",
+    alt: en("A site team in helmets standing on a slab, seen from above"),
+    caption: en("One site team, whatever the building"),
+  },
+  renovation: {
+    kind: "photo",
+    src: "/images/renovation-room.jpg",
+    alt: en("A room being renovated, with walls stripped back to brick"),
+    caption: en("Old walls opened up, then made good"),
+  },
+  handover: {
+    kind: "photo",
+    src: "/images/house-keys.jpg",
+    alt: en("A set of keys beside a small model house on a table"),
+    caption: en("The day the key is yours"),
+  },
   sustainable: {
+    kind: "film",
     video: "eco-city",
     orientation: "landscape",
     caption: en("Trees and shade belong in the plan too"),
   },
   start: {
+    kind: "film",
     video: "building-landscape",
     orientation: "landscape",
     caption: en("Every building starts with a conversation"),

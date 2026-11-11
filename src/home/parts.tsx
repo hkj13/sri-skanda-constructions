@@ -25,22 +25,31 @@ export function ChapterText({
   copy,
   children,
   headline,
+  media,
   as: Heading = "h2",
 }: {
   copy: ChapterCopy;
   children?: ReactNode;
+  /** The chapter's film or photograph. On phones it comes straight after the headline. */
+  media?: ReactNode;
   /** Replaces the default heading (the Structure chapter hangs it from the crane). */
   headline?: ReactNode;
   as?: "h1" | "h2";
 }) {
   return (
     <div className="relative z-10">
+      {/* Phones: the drawing's title block, which wide screens show on the stage. */}
+      <p aria-hidden="true" className="t-tech mb-4 inline-flex border border-navy-300/60 text-[10px] text-navy-300 lg:hidden">
+        <span className="border-r border-navy-300/60 px-2 py-1 text-accent">{copy.sheet}</span>
+        <span className="px-2 py-1">{copy.drawing}</span>
+      </p>
       <p className="t-eyebrow text-accent">{tr(copy.eyebrow)}</p>
       {headline ?? (
         <Heading className={`${Heading === "h1" ? "t-h1" : "t-h2"} mt-4 text-white`}>
           {tr(copy.headline)}
         </Heading>
       )}
+      {media}
       <p className="t-lead mt-6 max-w-[34ch] text-white/90">{tr(copy.body)}</p>
       {children}
       {copy.service ? (

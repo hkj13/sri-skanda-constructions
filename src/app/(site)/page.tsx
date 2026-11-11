@@ -2,7 +2,7 @@ import { ButtonLink, WhatsAppButton } from "@/components/ui/Button";
 import { RenovationControl } from "@/home/BeforeAfter";
 import { ChapterRail, FloorCounter } from "@/home/client";
 import { FacingControl, PlanViewControl, TypeControl } from "@/home/controls";
-import { FilmInText } from "@/home/layers";
+import { MediaInText } from "@/home/layers";
 import { ChapterText } from "@/home/parts";
 import { KeyAndHand } from "@/home/scenes";
 import { Story } from "@/home/Story";
@@ -51,23 +51,22 @@ export default function HomePage() {
       </ChapterText>
     ),
     vastu: (
-      <ChapterText copy={c.vastu}>
+      <ChapterText copy={c.vastu} media={<MediaInText id="vastu" />}>
         <FacingControl />
       </ChapterText>
     ),
     planning: (
-      <ChapterText copy={c.planning}>
+      <ChapterText copy={c.planning} media={<MediaInText id="planning" />}>
         <PlanViewControl />
       </ChapterText>
     ),
     foundation: (
-      <ChapterText copy={c.foundation}>
-        <FilmInText id="foundation" />
-      </ChapterText>
+      <ChapterText copy={c.foundation} media={<MediaInText id="foundation" />} />
     ),
     structure: (
       <ChapterText
         copy={c.structure}
+        media={<MediaInText id="structure" />}
         headline={
           <div data-crane-load="" className="crane-load relative mt-5 inline-block">
             <span data-crane-cable="" aria-hidden="true" className="crane-cable absolute bottom-full left-1/2 hidden h-[90svh] w-px bg-navy-300 lg:block" />
@@ -77,33 +76,35 @@ export default function HomePage() {
         }
       >
         <FloorCounter />
-        <FilmInText id="structure" />
       </ChapterText>
     ),
-    finishing: <ChapterText copy={c.finishing} />,
+    finishing: (
+      <ChapterText copy={c.finishing} media={<MediaInText id="finishing" />}>
+        <MediaInText id="finishing" desktop />
+      </ChapterText>
+    ),
     types: (
-      <ChapterText copy={c.types}>
+      <ChapterText copy={c.types} media={<MediaInText id="types" />}>
         <TypeControl />
       </ChapterText>
     ),
     renovation: (
-      <ChapterText copy={c.renovation}>
+      <ChapterText copy={c.renovation} media={<MediaInText id="renovation" />}>
         <RenovationControl />
+        <MediaInText id="renovation" desktop />
       </ChapterText>
     ),
     handover: (
-      <ChapterText copy={c.handover}>
+      <ChapterText copy={c.handover} media={<MediaInText id="handover" />}>
         <p className="t-h2 mt-4 text-accent">{tr(handoverNote)}</p>
         <KeyAndHand label="A key with a lime tag dropping into an open hand." className="mt-6 h-auto w-[min(50%,200px)]" />
       </ChapterText>
     ),
     sustainable: (
-      <ChapterText copy={c.sustainable}>
-        <FilmInText id="sustainable" />
-      </ChapterText>
+      <ChapterText copy={c.sustainable} media={<MediaInText id="sustainable" />} />
     ),
     start: (
-      <ChapterText copy={c.start}>
+      <ChapterText copy={c.start} media={<MediaInText id="start" />}>
         <div className="mt-8 flex max-w-md flex-col gap-3">
           <WhatsAppButton href={whatsapp}>{tr(ui.cta.whatsapp)}</WhatsAppButton>
           <ButtonLink href="/estimate" variant="lime">
@@ -114,7 +115,6 @@ export default function HomePage() {
           </ButtonLink>
         </div>
         <p className="t-tech mt-8 text-navy-300">{addressLines().join(", ")}</p>
-        <FilmInText id="start" />
       </ChapterText>
     ),
   };
