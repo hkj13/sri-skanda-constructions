@@ -12,7 +12,7 @@ import { ui } from "@content/ui";
 export const metadata: Metadata = pageMeta({
   title: "How we build: from consultation to handover",
   description:
-    "The build journey with Sri Skanda Constructions, builders from Pondicherry: consultation, site visit and soil test, design and Vastu, plan approval, agreement and BOQ, construction, quality checks and handover.",
+    "The build journey with Sri Skanda Constructions, based in Pondicherry: consultation, site visit and soil test, design and Vastu, plan approval, agreement and BOQ, construction, quality checks and handover.",
   path: "/process",
   image: "process",
 });

@@ -11,9 +11,9 @@ import { whatsappUrl } from "@content/site";
 import { ui } from "@content/ui";
 
 export const metadata: Metadata = pageMeta({
-  title: "Construction services by builders from Pondicherry",
+  title: "Construction services, from foundation to finishing",
   description:
-    "House construction, commercial buildings, Vastu consultation, 2D and 3D planning, renovation and turnkey projects, by one Pondicherry-based team from foundation to finishing.",
+    "House construction, commercial buildings, Vastu consultation, 2D and 3D planning, renovation and turnkey projects, handled by one team based in Pondicherry.",
   path: "/services",
   image: "services",
 });

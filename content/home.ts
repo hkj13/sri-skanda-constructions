@@ -7,13 +7,13 @@ import { en, type L } from "./i18n";
  *   "From the first stake to the house key."   (current)
  *   "Building Your Dreams"                      (the original headline)
  *   "Your plot, built right. Foundation to finishing."
- *   "Homes and businesses, by builders from Pondicherry."
+ *   "Homes and businesses, built right. Based in Pondicherry."
  */
 export const hero = {
   eyebrow: en("Saram, Pondicherry"),
   headline: en("From the first stake to the house key."),
   sub: en(
-    "Residential and commercial construction from Saram, Pondicherry. Planned with Vastu, built by one team from foundation to finishing.",
+    "Residential and commercial builders based in Saram, Pondicherry. Planned with Vastu, built by one team from foundation to finishing.",
   ),
   skip: en("Skip the story"),
 };
