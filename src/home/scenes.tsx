@@ -1,7 +1,8 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 import { BLOCK, VEL } from "@/brand/logo-art";
+import { clamp01, watchScroll } from "@/lib/scroll";
 import { PLOT } from "@/scene/building";
 import { C, ISO, isoPoint, sc } from "@/scene/iso-core";
 import { SCENE_SVG, Tag } from "./parts";
@@ -205,10 +206,49 @@ export function FinishingScene({ label, tags }: { label: string; tags: { brick: 
 
 /* ── 08 Handover: the key, dropped into an open hand ────────────────── */
 
+/**
+ * The key falls into the hand. On wide screens it falls late in the
+ * Handover chapter, while the text stays pinned. On phones the text keeps
+ * moving, so the key falls while the hand itself crosses the screen, from
+ * the bottom edge up towards the middle of the space under the drawing.
+ */
 export function KeyAndHand({ label, className = "mt-8 h-auto w-[min(60%,240px)]" }: { label: string; className?: string }) {
+  const ref = useRef<SVGSVGElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const narrow = window.matchMedia("(max-width: 1023.98px)");
+    let last = "";
+    const update = () => {
+      if (!narrow.matches) {
+        if (last) el.style.removeProperty("--kp");
+        last = "";
+        return;
+      }
+      const vh = window.innerHeight;
+      const r = el.getBoundingClientRect();
+      const stage = document.querySelector(".story-backdrop")?.getBoundingClientRect().bottom ?? 0;
+      const from = vh - r.height * 0.9;
+      const to = Math.min(from - 40, stage + (vh - stage) * 0.25);
+      const k = clamp01((from - r.top) / (from - to)).toFixed(3);
+      if (k === last) return;
+      last = k;
+      el.style.setProperty("--kp", k);
+    };
+    return watchScroll(update);
+  }, []);
+
   return (
-    <svg viewBox="0 0 220 170" className={className} role="img" aria-label={label}>
-      <g className="sc" style={sc(0.58, 0.82, -90)}>
+    <svg
+      ref={ref}
+      viewBox="0 0 220 170"
+      className={className}
+      role="img"
+      aria-label={label}
+      style={{ "--kp": "clamp(0, calc((var(--p) - 0.58) / 0.24), 1)" } as CSSProperties}
+    >
+      <g className="sc" style={{ ...sc(0, 1, -90), "--p": "var(--kp)" } as CSSProperties}>
         <g transform="rotate(-18 96 60)">
           <circle cx={78} cy={60} r={15} fill="none" stroke={C.white} strokeWidth={5} />
           <path d="M93 60h62M134 60v13M148 60v13" fill="none" stroke={C.white} strokeWidth={5} />
