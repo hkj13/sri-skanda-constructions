@@ -17,6 +17,8 @@
   --gutter: clamp(16px, 1.6vw, 40px);
   --header-h: 72px;
   --laser-h: 3px;
+  /* The drawing grid: a quiet line, only a little lighter than the paper. */
+  --grid-line: color-mix(in srgb, var(--secondary) 42%, var(--primary));
 
   --ease-settle: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-drop: cubic-bezier(0.55, 0, 1, 0.45);
@@ -149,8 +151,8 @@ body {
 /* Faint navy-on-navy drawing grid. */
 @utility bp-grid {
   background-image:
-    linear-gradient(var(--secondary) 1px, transparent 1px),
-    linear-gradient(90deg, var(--secondary) 1px, transparent 1px);
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
   background-size: 48px 48px;
 }
 
@@ -263,8 +265,8 @@ body {
   /* The same navy paper and grid as the page behind, lined up with it. */
   background-color: var(--primary);
   background-image:
-    linear-gradient(var(--secondary) 1px, transparent 1px),
-    linear-gradient(90deg, var(--secondary) 1px, transparent 1px);
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
   background-size: 48px 48px;
   background-position: var(--grid-x, 0px) 0;
   --p: 1;
