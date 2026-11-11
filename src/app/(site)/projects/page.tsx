@@ -11,7 +11,7 @@ import { site, whatsappUrl } from "@content/site";
 import { ui } from "@content/ui";
 
 export const metadata: Metadata = pageMeta({
-  title: "Projects in Pondicherry",
+  title: "Projects by Sri Skanda Constructions",
   description: "Homes and commercial buildings by Sri Skanda Constructions, ongoing and completed.",
   path: "/projects",
   index: projects.length > 0,

@@ -10,9 +10,9 @@ import { addressLines, mapLinks, site, whatsappUrl } from "@content/site";
 import { ui } from "@content/ui";
 
 export const metadata: Metadata = pageMeta({
-  title: "About Sri Skanda Constructions, builders in Pondicherry",
+  title: "About Sri Skanda Constructions, builders from Pondicherry",
   description:
-    "Sri Skanda Constructions builds homes and commercial buildings in Pondicherry: Vastu-led planning and turnkey delivery by one team.",
+    "Sri Skanda Constructions, from Pondicherry, builds homes and commercial buildings: Vastu-led planning and turnkey delivery by one team.",
   path: "/about",
   image: "about",
 });

@@ -7,7 +7,7 @@ export const OG_IMAGE = {
   url: "/brand/og/og-default.png",
   width: 1200,
   height: 630,
-  alt: "Sri Skanda Constructions: homes and commercial buildings, built in Pondicherry",
+  alt: "Sri Skanda Constructions: homes and commercial buildings, by builders from Pondicherry",
 };
 
 /** Metadata for one page: title, description, canonical URL and share card. */
@@ -90,7 +90,7 @@ export function businessJsonLd() {
           })),
         }
       : {}),
-    areaServed: site.areaServed.map((name) => ({ "@type": "Place", name })),
+    ...(site.areaServed.length ? { areaServed: site.areaServed.map((name) => ({ "@type": "Place", name })) } : {}),
     ...(sameAs.length ? { sameAs } : {}),
     hasOfferCatalog: {
       "@type": "OfferCatalog",
@@ -102,7 +102,7 @@ export function businessJsonLd() {
           name: tr(s.name),
           description: tr(s.summary),
           url: `${site.url}/services/${s.slug}`,
-          areaServed: site.areaServed,
+          ...(site.areaServed.length ? { areaServed: site.areaServed } : {}),
           provider: { "@id": `${site.url}/#business` },
         },
       })),
@@ -120,7 +120,7 @@ export function serviceJsonLd(slug: string) {
     description: tr(s.summary),
     url: `${site.url}/services/${s.slug}`,
     serviceType: tr(s.name),
-    areaServed: site.areaServed.map((name) => ({ "@type": "Place", name })),
+    ...(site.areaServed.length ? { areaServed: site.areaServed.map((name) => ({ "@type": "Place", name })) } : {}),
     provider: { "@id": `${site.url}/#business`, "@type": "GeneralContractor", name: site.name, address: fullAddress() },
   };
 }

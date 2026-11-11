@@ -6,9 +6,9 @@ import { tr } from "@content/i18n";
 import { ui } from "@content/ui";
 
 export const metadata: Metadata = pageMeta({
-  title: "Free construction estimate in Pondicherry",
+  title: "Free construction estimate from Pondicherry builders",
   description:
-    "Get a free estimate for building a house or commercial building in Pondicherry. Enter the built-up area, floors, project type and finish, and we reply on WhatsApp.",
+    "Get a free estimate for a house or commercial building from Sri Skanda Constructions, Pondicherry. Enter the built-up area, floors, project type and finish, and we reply on WhatsApp.",
   path: "/estimate",
   image: "estimate",
 });

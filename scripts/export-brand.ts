@@ -345,7 +345,7 @@ function wrap(str: string, size: number, max: number): string[] {
 
 /** Share images for the main pages and each service, in public/brand/og. */
 const SHARE_PAGES: { file: string; title: string }[] = [
-  { file: "services", title: "Construction services in Pondicherry." },
+  { file: "services", title: "Construction services, by builders from Pondicherry." },
   { file: "process", title: "How a building gets built, stage by stage." },
   { file: "estimate", title: "Get a free construction estimate." },
   { file: "contact", title: "Plan your build with us." },
@@ -356,7 +356,7 @@ const SHARE_PAGES: { file: string; title: string }[] = [
 async function exportOg() {
   console.log("Social image");
   write(join(OUT, "og", "og-template.svg"), ogSvg(null) + "\n");
-  const filled = ogSvg(["Homes and commercial buildings,", "built in Pondicherry."]);
+  const filled = ogSvg(["Homes and commercial buildings,", "by builders from Pondicherry."]);
   write(join(OUT, "og", "og-default.svg"), filled + "\n");
   write(join(OUT, "og", "og-default.png"), await png(filled, 1200, 630));
   for (const page of SHARE_PAGES) {

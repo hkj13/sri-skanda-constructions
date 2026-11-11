@@ -7,7 +7,7 @@ import { en, type L } from "./i18n";
  *   "From the first stake to the house key."   (current)
  *   "Building Your Dreams"                      (the original headline)
  *   "Your plot, built right. Foundation to finishing."
- *   "Homes and businesses, built in Pondicherry."
+ *   "Homes and businesses, by builders from Pondicherry."
  */
 export const hero = {
   eyebrow: en("Saram, Pondicherry"),

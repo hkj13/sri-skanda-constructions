@@ -102,7 +102,11 @@ export const site: SiteConfig = {
   // { days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], opens: "09:00", closes: "18:00" }
   openingHours: [],
 
-  areaServed: ["Pondicherry"],
+  // Where the company takes on work, for search engines. Left empty so the
+  // site does not say the work is limited to Pondicherry: the office is in
+  // Pondicherry, the work is not confined to it.
+  // TODO(client): list the real places, for example ["Pondicherry", "Tamil Nadu"].
+  areaServed: [],
 
   // TODO(client): paste the real profile URLs. Empty ones stay hidden.
   social: {
