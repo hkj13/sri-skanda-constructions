@@ -20,9 +20,9 @@ const dmMono = DM_Mono({
   preload: false,
 });
 
-const TITLE = "Sri Skanda Constructions | Home and commercial builders based in Pondicherry";
+const TITLE = "Sri Skanda Constructions | Home and commercial builders in Pondicherry and Hyderabad";
 const DESCRIPTION =
-  "Residential and commercial builders based in Saram, Pondicherry. Custom homes, villas, apartments, offices and showrooms, planned with Vastu and built from foundation to finishing.";
+  "Residential and commercial builders in Pondicherry and Hyderabad, based in Saram, Pondicherry. Custom homes, villas, apartments, offices and showrooms, planned with Vastu and built from foundation to finishing.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),

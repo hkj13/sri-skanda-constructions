@@ -13,7 +13,7 @@ import { ui } from "@content/ui";
 export const metadata: Metadata = pageMeta({
   title: "Construction services, from foundation to finishing",
   description:
-    "House construction, commercial buildings, Vastu consultation, 2D and 3D planning, renovation and turnkey projects, handled by one team based in Pondicherry.",
+    "House construction, commercial buildings, Vastu consultation, 2D and 3D planning, renovation and turnkey projects in Pondicherry and Hyderabad, handled by one team.",
   path: "/services",
   image: "services",
 });

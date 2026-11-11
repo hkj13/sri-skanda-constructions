@@ -12,7 +12,7 @@ import { ui } from "@content/ui";
 export const metadata: Metadata = pageMeta({
   title: "About Sri Skanda Constructions, builders based in Pondicherry",
   description:
-    "Sri Skanda Constructions, based in Pondicherry, builds homes and commercial buildings: Vastu-led planning and turnkey delivery by one team.",
+    "Sri Skanda Constructions, based in Pondicherry, builds homes and commercial buildings in Pondicherry and Hyderabad: Vastu-led planning and turnkey delivery by one team.",
   path: "/about",
   image: "about",
 });

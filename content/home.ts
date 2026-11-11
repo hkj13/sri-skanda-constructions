@@ -13,7 +13,7 @@ export const hero = {
   eyebrow: en("Saram, Pondicherry"),
   headline: en("From the first stake to the house key."),
   sub: en(
-    "Residential and commercial builders based in Saram, Pondicherry. Planned with Vastu, built by one team from foundation to finishing.",
+    "Residential and commercial builders in Pondicherry and Hyderabad. Planned with Vastu, built by one team from foundation to finishing.",
   ),
   skip: en("Skip the story"),
 };

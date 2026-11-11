@@ -7,7 +7,7 @@ export const OG_IMAGE = {
   url: "/brand/og/og-default.png",
   width: 1200,
   height: 630,
-  alt: "Sri Skanda Constructions: homes and commercial buildings, from foundation to finishing. Based in Saram, Pondicherry.",
+  alt: "Sri Skanda Constructions: homes and commercial buildings, from foundation to finishing. Pondicherry and Hyderabad.",
 };
 
 /** Metadata for one page: title, description, canonical URL and share card. */

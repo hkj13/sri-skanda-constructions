@@ -13,7 +13,7 @@ import { en, type L } from "./i18n";
 export const about = {
   title: en("A builder from Pondicherry"),
   intro: [
-    en("Sri Skanda Constructions builds homes and commercial buildings. We are based in Pondicherry, and the work is what you would expect of a builder: custom homes, villas and apartments; offices, shops, showrooms and commercial complexes; renovation of buildings that need it."),
+    en("Sri Skanda Constructions builds homes and commercial buildings. We are based in Pondicherry and currently build in Pondicherry and Hyderabad. The work is what you would expect of a builder: custom homes, villas and apartments; offices, shops, showrooms and commercial complexes; renovation of buildings that need it."),
     en("Two things shape how we plan. The first is Vastu, which we treat as part of the drawing, not an afterthought. The second is turnkey delivery: one team takes the job from foundation to finishing, so you are never left carrying messages between contractors."),
   ],
   approachTitle: en("How we work"),

@@ -30,7 +30,7 @@ export const ui = {
   },
   whatsappGreeting: en("Hello, I would like to plan a build."),
   footer: {
-    tagline: en("Residential and commercial construction, from foundation to finishing."),
+    tagline: en("Residential and commercial construction in Pondicherry and Hyderabad, from foundation to finishing."),
     visit: en("Visit"),
     talk: en("Talk"),
     explore: en("Explore"),

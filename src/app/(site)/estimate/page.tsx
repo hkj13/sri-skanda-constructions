@@ -8,7 +8,7 @@ import { ui } from "@content/ui";
 export const metadata: Metadata = pageMeta({
   title: "Free construction estimate",
   description:
-    "Get a free estimate for a house or commercial building from Sri Skanda Constructions, based in Pondicherry. Enter the built-up area, floors, project type and finish, and we reply on WhatsApp.",
+    "Get a free estimate for a house or commercial building in Pondicherry or Hyderabad from Sri Skanda Constructions. Enter the built-up area, floors, project type and finish, and we reply on WhatsApp.",
   path: "/estimate",
   image: "estimate",
 });

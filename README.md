@@ -104,7 +104,7 @@ hidden or shows a clearly labelled placeholder. Nothing has been invented.
 - [ ] **Real site and project photos**, to replace the ten stock photos and five stock videos listed in [`CREDITS.md`](./CREDITS.md). Confirm the licence of the five videos, which came with the old site with no recorded source.
 - [ ] **Verified testimonials** (`content/testimonials.ts`). The three on the old site are unverified and hidden.
 - [ ] **Experience claim**: how long the company has been building (`claims.experience` in `content/site.ts`). Hidden until confirmed.
-- [ ] **Service area claim**: where the company takes on work (`claims.serviceArea`, and `areaServed` for search engines). Hidden until confirmed.
+- [x] **Service area**: Pondicherry and Hyderabad (`claims.serviceArea` and `areaServed` in `content/site.ts`, and the lines that name them in the home intro, About page, footer and page descriptions).
 - [ ] **RERA number**, only if the company sells apartment or plotted projects (`reraNumber`). See [RERA](#rera).
 - [ ] **Per-square-foot rates**, if the estimator should show a price range (`content/estimate.ts`).
 - [ ] **Budget bands** for the Plan your build form, if the defaults do not fit (`BUDGET_RANGES` in `content/estimate.ts`).

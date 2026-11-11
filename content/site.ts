@@ -102,11 +102,10 @@ export const site: SiteConfig = {
   // { days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], opens: "09:00", closes: "18:00" }
   openingHours: [],
 
-  // Where the company takes on work, for search engines. Left empty so the
-  // site does not say the work is limited to Pondicherry: the office is in
-  // Pondicherry, the work is not confined to it.
-  // TODO(client): list the real places, for example ["Pondicherry", "Tamil Nadu"].
-  areaServed: [],
+  // The markets the company is working in now, for search engines. The same
+  // two places are named in the home intro, the About page, the footer and
+  // the page descriptions; change them there too if this list changes.
+  areaServed: ["Pondicherry", "Hyderabad"],
 
   // TODO(client): paste the real profile URLs. Empty ones stay hidden.
   social: {
@@ -123,11 +122,10 @@ export const site: SiteConfig = {
       enabled: false,
       text: "Decades of experience",
     },
-    // TODO(client): confirm where the company actually takes on projects,
-    // edit the text to match, then set enabled to true.
+    // Where the company takes on projects (shown on the About page).
     serviceArea: {
-      enabled: false,
-      text: "Serving all over India",
+      enabled: true,
+      text: "Building in Pondicherry and Hyderabad",
     },
   },
 };
