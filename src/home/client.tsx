@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from "react";
 import { story, subscribe } from "@/scene/store";
-import { SWEEP, sweep, threeChapterAt, windowClip } from "./story";
+import { SWEEP, sweep } from "./story";
 
 /* ── Floor counter for the Structure chapter ────────────────────────── */
 
@@ -96,125 +96,133 @@ type Mode = "none" | "video" | "still";
 let decided: Mode | null = null;
 
 /**
- * Moving footage only on wide screens with a mouse, without Save-Data or
- * reduced motion. Everyone else gets the clip's still frame.
+ * Moving footage everywhere, except with reduced motion, Save-Data or a
+ * very slow connection, where each clip shows its still frame.
  */
 function playMode(): Mode {
   if (decided) return decided;
-  const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
-  const ok =
-    window.matchMedia("(min-width: 1024px) and (hover: hover) and (pointer: fine)").matches &&
-    !window.matchMedia("(prefers-reduced-motion: reduce)").matches &&
-    !conn?.saveData;
-  decided = ok ? "video" : "still";
+  const conn = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+  const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  decided = calm || conn?.saveData || /2g/.test(conn?.effectiveType ?? "") ? "still" : "video";
   return decided;
 }
 const never = () => () => {};
 const useMode = () => useSyncExternalStore(never, playMode, () => "none" as Mode);
 
-let pageLoaded = false;
+/** Whether a media query matches; false on the server. */
+function useMedia(query?: string): boolean {
+  return useSyncExternalStore(
+    (change) => {
+      if (!query) return () => {};
+      const m = window.matchMedia(query);
+      m.addEventListener("change", change);
+      return () => m.removeEventListener("change", change);
+    },
+    () => (query ? window.matchMedia(query).matches : true),
+    () => false,
+  );
+}
 
 /**
- * A stock clip shown as a tinted layer inside a drawing of the home story.
+ * A stock clip in the home story, in its own colours.
  *
- * It loads once its chapter is close, plays only while the chapter is on
- * the stage (and the tab is visible), and pauses otherwise. Phones and
- * reduced motion get the still frame instead, when `still` is set.
+ * With a `chapter` it loads once that chapter is close and plays only while
+ * the chapter is on the stage. Without one it follows its own place on the
+ * screen. Either way it pauses when out of sight or when the tab is hidden.
+ * With `media` it exists only where that media query matches, so a clip
+ * shown in two places (beside the drawing, or under the text on phones)
+ * is only ever downloaded once.
  */
 export function SceneVideo({
   name,
   chapter,
+  media,
   className = "",
   style,
-  still = true,
-  late = false,
   children,
 }: {
   name: string;
-  /** The story chapter the clip belongs to. */
-  chapter: number;
+  chapter?: number;
+  media?: string;
   className?: string;
   style?: CSSProperties;
-  /** Show the still frame where the clip does not play. */
-  still?: boolean;
-  /** Wait for the page to finish loading first (the opening chapter). */
-  late?: boolean;
   /** Drawn over the footage, such as window bars. */
   children?: ReactNode;
 }) {
   const mode = useMode();
+  const allowed = useMedia(media);
+  const box = useRef<HTMLDivElement>(null);
   const video = useRef<HTMLVideoElement>(null);
   const [load, setLoad] = useState(false);
   const [playing, setPlaying] = useState(false);
+  const active = mode === "video" && allowed;
 
   useEffect(() => {
-    if (mode !== "video") return;
-    let ready = !late || pageLoaded || document.readyState === "complete";
+    const el = box.current;
+    if (!active || !el) return;
     let on = false;
-    let idle = 0;
-    const check = () => {
-      const g = story.g;
-      if (ready && Math.abs(g - (chapter + 0.5)) < 1.6) setLoad(true);
+    let seen = false;
+    const sync = (now: boolean) => {
       const v = video.current;
-      const now = g >= chapter - SWEEP && g < chapter + 1 + SWEEP && !document.hidden;
+      now = now && !document.hidden;
       if (!v || now === on) return;
       on = now;
       if (on) v.play().catch(() => {});
       else v.pause();
     };
-    const onLoad = () => {
-      pageLoaded = true;
-      // Give the first paint and the fonts the network first.
-      idle = window.setTimeout(() => {
-        ready = true;
-        check();
-      }, 600);
-    };
-    if (!ready) window.addEventListener("load", onLoad, { once: true });
-    check();
-    const stop = subscribe(check);
-    document.addEventListener("visibilitychange", check);
+    if (chapter !== undefined) {
+      const check = () => {
+        const g = story.g;
+        if (Math.abs(g - (chapter + 0.5)) < 1.6) setLoad(true);
+        sync(g >= chapter - SWEEP && g < chapter + 1 + SWEEP);
+      };
+      check();
+      const stop = subscribe(check);
+      const vis = () => check();
+      document.addEventListener("visibilitychange", vis);
+      return () => {
+        stop();
+        document.removeEventListener("visibilitychange", vis);
+      };
+    }
+    const near = new IntersectionObserver(([e]) => e.isIntersecting && setLoad(true), { rootMargin: "60% 0px" });
+    const view = new IntersectionObserver(
+      ([e]) => {
+        seen = e.isIntersecting;
+        sync(seen);
+      },
+      { threshold: 0.2 },
+    );
+    near.observe(el);
+    view.observe(el);
+    const vis = () => sync(seen);
+    document.addEventListener("visibilitychange", vis);
     return () => {
-      stop();
-      window.clearTimeout(idle);
-      window.removeEventListener("load", onLoad);
-      document.removeEventListener("visibilitychange", check);
+      near.disconnect();
+      view.disconnect();
+      document.removeEventListener("visibilitychange", vis);
     };
-  }, [mode, chapter, late, load]);
-
-  const tint = (
-    <>
-      {/* tint the footage into the palette */}
-      <span className="absolute inset-0 bg-primary mix-blend-color" />
-      <span className="absolute inset-0 bg-primary/15" />
-    </>
-  );
+  }, [active, chapter, load]);
 
   return (
-    <div aria-hidden="true" className={`pointer-events-none absolute overflow-hidden ${className}`} style={style}>
-      {mode === "video" && load ? (
-        <>
-          <video
-            ref={video}
-            muted
-            loop
-            playsInline
-            preload="auto"
-            poster={`/videos/${name}.jpg`}
-            onPlaying={() => setPlaying(true)}
-            className={`h-full w-full object-cover grayscale transition-opacity duration-700 ${playing ? "opacity-95" : "opacity-80"}`}
-          >
-            <source src={`/videos/${name}.webm`} type="video/webm" />
-            <source src={`/videos/${name}.mp4`} type="video/mp4" />
-          </video>
-          {tint}
-        </>
-      ) : mode === "still" && still ? (
-        <>
-          {/* eslint-disable-next-line @next/next/no-img-element -- a small, pre-sized still frame */}
-          <img src={`/videos/${name}.jpg`} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover grayscale" />
-          {tint}
-        </>
+    <div ref={box} aria-hidden="true" className={`pointer-events-none absolute overflow-hidden ${className}`} style={style}>
+      {mode !== "none" && allowed ? (
+        // eslint-disable-next-line @next/next/no-img-element -- a small, pre-sized still frame
+        <img src={`/videos/${name}.jpg`} alt="" loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
+      ) : null}
+      {active && load ? (
+        <video
+          ref={video}
+          muted
+          loop
+          playsInline
+          preload="auto"
+          onPlaying={() => setPlaying(true)}
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${playing ? "opacity-100" : "opacity-0"}`}
+        >
+          <source src={`/videos/${name}.webm`} type="video/webm" />
+          <source src={`/videos/${name}.mp4`} type="video/mp4" />
+        </video>
       ) : null}
       {children}
     </div>
@@ -223,65 +231,28 @@ export function SceneVideo({
 
 /* ── Layers under the 3D model ──────────────────────────────────────── */
 
-/**
- * Fixed layers on the home page that sit between the navy paper and the
- * 3D model: dusk for the handover, and footage behind the model in the
- * Structure and Start chapters. They follow the story time, and are cut by
- * the same laser sweep as the model.
- */
-function StoryUnder() {
+/** Darkens the paper on the home page while the handover is on the stage. */
+function StoryDusk() {
   const dusk = useRef<HTMLDivElement>(null);
-  const backs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const update = () => {
       const g = story.g;
-      const chapter = Math.floor(g);
-      if (dusk.current) {
-        const k = reduced ? Number(chapter === 8) : sweep(g, 8) * (1 - sweep(g, 9));
-        dusk.current.style.opacity = k.toFixed(3);
-      }
-      const c = threeChapterAt(g);
-      for (const el of backs.current) {
-        if (!el) continue;
-        const mine = Number(el.dataset.chapter);
-        const on = reduced ? chapter === mine : c === mine;
-        el.style.visibility = on ? "visible" : "hidden";
-        el.style.clipPath = on && !reduced ? windowClip(g, mine, mine + 1) : "";
-      }
+      if (!dusk.current) return;
+      const k = reduced ? Number(Math.floor(g) === 8) : sweep(g, 8) * (1 - sweep(g, 9));
+      dusk.current.style.opacity = k.toFixed(3);
     };
     update();
-    const stop = subscribe(update);
-    return () => {
-      stop();
-    };
+    return subscribe(update);
   }, []);
 
-  const back = (chapter: number, name: string, n: number) => (
-    <div
-      ref={(el) => {
-        backs.current[n] = el;
-      }}
-      data-chapter={chapter}
-      aria-hidden="true"
-      className="story-under pointer-events-none fixed inset-y-0 right-0 hidden w-[64vw] lg:block"
-      style={{ visibility: "hidden" }}
-    >
-      <SceneVideo name={name} chapter={chapter} still className="inset-0 opacity-80" />
-    </div>
-  );
-
   return (
-    <>
-      <div
-        ref={dusk}
-        aria-hidden="true"
-        className="pointer-events-none fixed inset-0 bg-navy-950 opacity-0 motion-reduce:transition-opacity motion-reduce:duration-300"
-      />
-      {back(4, "iron-worker", 0)}
-      {back(10, "building-landscape", 1)}
-    </>
+    <div
+      ref={dusk}
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-0 bg-navy-950 opacity-0 motion-reduce:transition-opacity motion-reduce:duration-300"
+    />
   );
 }
 
@@ -289,5 +260,5 @@ function StoryUnder() {
 export function UnderLayers() {
   const pathname = usePathname();
   // Keyed by page, so every layer starts fresh after a navigation.
-  return pathname === "/" ? <StoryUnder key={pathname} /> : null;
+  return pathname === "/" ? <StoryDusk key={pathname} /> : null;
 }

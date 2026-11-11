@@ -239,32 +239,39 @@ export const renovation: {
   photos: null,
 };
 
-export type StoryPhoto = { src: string; caption: L; alt: L };
+export type StoryFilm = {
+  /** Clip name in public/videos (name.webm, name.mp4 and the still name.jpg). */
+  video: string;
+  /** Shape of the clip. */
+  orientation: "landscape" | "portrait";
+  caption: L;
+};
 
 /**
- * Site photographs pinned to the drawings in the home story (on phones they
- * sit under the chapter text). They are the stock photos listed in
- * CREDITS.md. TODO(client): replace each with a photo from a real site.
+ * Site films in the home story: one stock clip per chapter where it fits
+ * (see CREDITS.md), framed beside the drawing on wide screens and under the
+ * chapter text on phones. The stock photos stay on the About page only.
+ * TODO(client): replace each clip with footage from a real site.
  */
-export const storyPhotos: Partial<Record<ChapterId, StoryPhoto>> = {
-  planning: {
-    src: "/images/at-the-screen.jpg",
-    caption: en("Drawn on screen before work starts"),
-    alt: en("A person working at a screen"),
-  },
+export const storyFilms: Partial<Record<ChapterId, StoryFilm>> = {
   foundation: {
-    src: "/images/site-rebar.jpg",
-    caption: en("Steel checked before the pour"),
-    alt: en("Workers tying steel on a construction site, seen from above"),
+    video: "construction-site",
+    orientation: "landscape",
+    caption: en("Steel is tied and checked before the pour"),
   },
-  handover: {
-    src: "/images/site-worker.jpg",
-    caption: en("One team on site"),
-    alt: en("A site worker in a yellow helmet"),
+  structure: {
+    video: "iron-worker",
+    orientation: "portrait",
+    caption: en("Props hold each slab until it can stand on its own"),
   },
   sustainable: {
-    src: "/images/planning-desk.jpg",
-    caption: en("Planned on paper first"),
-    alt: en("Two people going through a drawing and figures at a desk"),
+    video: "eco-city",
+    orientation: "landscape",
+    caption: en("Trees and shade belong in the plan too"),
+  },
+  start: {
+    video: "building-landscape",
+    orientation: "landscape",
+    caption: en("Every building starts with a conversation"),
   },
 };

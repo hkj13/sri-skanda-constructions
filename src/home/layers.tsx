@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { Drawing } from "@/scene/Drawing";
 import { IsoBuilding } from "@/scene/Iso";
@@ -11,10 +10,9 @@ import {
   chapters,
   finishingTags,
   foundationTags,
-  storyPhotos,
+  storyFilms,
   sustainableTags,
   type ChapterId,
-  type StoryPhoto,
 } from "@content/home";
 import { tr, type L } from "@content/i18n";
 import { CENTRE_NOTE, FACINGS, LAYOUTS, ROOMS, type Facing, type RoomId } from "@content/vastu";
@@ -397,42 +395,34 @@ function TypesVisual() {
   );
 }
 
-/* ── Photographs and stills on the drawing sheet ────────────────────── */
+/* ── Site films on the drawing sheet ────────────────────────────────── */
+
+const WIDE = "(min-width: 1024px)";
+const NARROW = "(max-width: 1023.98px)";
+const chapterOf = (id: ChapterId) => chapters.findIndex((c) => c.id === id);
 
 /**
- * A site photograph pinned to the drawing sheet, like a reference print.
- * Wide screens only; phones get the same photo in the text (see PhotoInText).
+ * A short site film pinned to the drawing sheet, like a reference print,
+ * playing while its chapter is on the stage. Wide screens only; phones get
+ * the same clip under the chapter text (FilmInText).
  */
-function PinnedPhoto({ photo, style, t0 = 0.18 }: { photo: StoryPhoto; style: CSSProperties; t0?: number }) {
+function SiteFilm({ id, style, t0 = 0.2 }: { id: ChapterId; style: CSSProperties; t0?: number }) {
+  const film = storyFilms[id]!;
+  const portrait = film.orientation === "portrait";
   return (
-    <figure className="story-photo sc absolute z-[3] hidden lg:block" style={{ ...sc(t0, t0 + 0.16, 30), ...style }}>
-      <div className="relative aspect-[4/3] overflow-hidden bg-navy-700 ring-1 ring-white/70 shadow-[0_24px_48px_-16px_rgb(7_11_24/0.85)]">
-        <Image
-          src={photo.src}
-          alt=""
-          fill
-          sizes="(min-width: 1536px) 360px, 260px"
-          quality={75}
-          className="story-photo-img object-cover"
-        />
+    <figure className="sc absolute z-[3] hidden lg:block" style={{ ...sc(t0, t0 + 0.14, 30), ...style }}>
+      <div
+        className={`relative overflow-hidden bg-navy-700 ring-1 ring-white/70 shadow-[0_24px_48px_-16px_rgb(7_11_24/0.85)] ${
+          portrait ? "aspect-[9/16]" : "aspect-video"
+        }`}
+      >
+        <SceneVideo name={film.video} chapter={chapterOf(id)} media={WIDE} className="story-film-clip inset-0" />
       </div>
       <figcaption className="t-tech mt-2.5 flex items-start gap-2 text-[11px] leading-snug text-white">
         <span aria-hidden="true" className="mt-[3px] h-2 w-2 shrink-0 bg-accent" />
-        {tr(photo.caption)}
+        {tr(film.caption)}
       </figcaption>
     </figure>
-  );
-}
-
-/** A clip's still frame as a tinted backdrop, for phones (the wide screen plays the clip). */
-function Still({ name, className = "", style }: { name: string; className?: string; style?: CSSProperties }) {
-  return (
-    <div aria-hidden="true" className={`pointer-events-none absolute overflow-hidden lg:hidden ${className}`} style={style}>
-      {/* eslint-disable-next-line @next/next/no-img-element -- a small, pre-sized still frame */}
-      <img src={`/videos/${name}.jpg`} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover grayscale" />
-      <span className="absolute inset-0 bg-primary mix-blend-color" />
-      <span className="absolute inset-0 bg-primary/20" />
-    </div>
   );
 }
 
@@ -449,26 +439,12 @@ function WindowBars() {
 
 /* ── The layers ─────────────────────────────────────────────────────── */
 
-const SKY_MASK = "radial-gradient(ellipse 62% 100% at 50% 100%, #000 18%, transparent 74%)";
-const BACK_MASK = "radial-gradient(ellipse 60% 58% at 52% 46%, #000 24%, transparent 78%)";
-
-const photo = (id: ChapterId) => storyPhotos[id]!;
-
 /** What each chapter puts on the stage, inside its 10:9 drawing box. */
 function scene(i: number): ReactNode {
   switch (i) {
     case 0:
       return (
         <>
-          {/* footage as the dawn sky over the plot */}
-          <SceneVideo
-            name="construction-site"
-            chapter={0}
-            late
-            still={false}
-            className="inset-x-0 top-0 h-[41%]"
-            style={{ maskImage: SKY_MASK, opacity: "calc(clamp(0, (0.95 - var(--p)) / 0.45, 1) * 0.8)" }}
-          />
           <GroundScene label="An empty plot at dawn. Four lime survey stakes mark the corners, string lines run between them, and the Sri Skanda Constructions mark stands on the plot." />
         </>
       );
@@ -483,30 +459,22 @@ function scene(i: number): ReactNode {
       return (
         <>
           <PlanningVisual />
-          <PinnedPhoto photo={photo("planning")} style={{ left: "0%", top: "1%", width: "24%" }} t0={0.3} />
         </>
       );
     case 3:
       return (
         <>
-          {/* footage inside the section cut, seen through the open trench */}
-          <SceneVideo
-            name="construction-site"
-            chapter={3}
-            className="left-[23.75%] top-[41.67%] h-[41.67%] w-[42.5%]"
-            style={{ opacity: "clamp(0, calc((var(--p) - 0.14) * 7), 1)" }}
-          />
           <FoundationScene
             tags={words(foundationTags)}
             label="Section through a foundation: a trench in tested soil, a concrete bed, a steel-reinforced footing, a column rising from it, and a plinth beam at ground level."
           />
-          <PinnedPhoto photo={photo("foundation")} style={{ left: "3%", top: "5%", width: "28%" }} t0={0.36} />
+          <SiteFilm id="foundation" style={{ left: "2%", top: "2%", width: "38%" }} t0={0.3} />
         </>
       );
     case 4:
       return (
         <>
-          <Still name="iron-worker" className="inset-0 opacity-60" style={{ maskImage: BACK_MASK }} />
+          <SiteFilm id="structure" style={{ left: "72%", top: "5%", width: "15%" }} t0={0.12} />
           <div data-scene-fallback="" className="absolute inset-0">
             <IsoBuilding
               g={5}
@@ -561,29 +529,22 @@ function scene(i: number): ReactNode {
               label="The finished house at dusk: the front door open and the windows lit, one room after another."
             />
           </div>
-          <PinnedPhoto photo={photo("handover")} style={{ left: "0%", top: "1%", width: "24%" }} t0={0.22} />
         </>
       );
     case 9:
       return (
         <>
-          <SceneVideo
-            name="eco-city"
-            chapter={9}
-            className="left-0 top-0 h-[62%] w-full"
-            style={{ maskImage: "radial-gradient(ellipse 52% 54% at 50% 48%, #000 34%, transparent 76%)" }}
-          />
           <SustainableScene
             tags={words(sustainableTags)}
             label="The house from the road with solar panels on the top roof, a garden on the terrace, and a pipe carrying rainwater down to an underground sump."
           />
-          <PinnedPhoto photo={photo("sustainable")} style={{ left: "72.5%", top: "40%", width: "20%" }} t0={0.5} />
+          <SiteFilm id="sustainable" style={{ left: "70.5%", top: "34%", width: "23%" }} t0={0.46} />
         </>
       );
     default:
       return (
         <>
-          <Still name="building-landscape" className="inset-0 opacity-60" style={{ maskImage: BACK_MASK }} />
+          <SiteFilm id="start" style={{ left: "0%", top: "1%", width: "30%" }} t0={0.12} />
           <div data-scene-fallback="" className="absolute inset-0">
             <Drawing name="finished-lit" className={SCENE_SVG} />
           </div>
@@ -623,18 +584,24 @@ export function StageLayers() {
   );
 }
 
-/** The chapter's photograph inside the text, on phones and tablets. */
-export function PhotoInText({ id }: { id: ChapterId }) {
-  const p = storyPhotos[id];
-  if (!p) return null;
+/** The chapter's site film under its text, on phones and tablets. */
+export function FilmInText({ id }: { id: ChapterId }) {
+  const film = storyFilms[id];
+  if (!film) return null;
+  const portrait = film.orientation === "portrait";
   return (
-    <figure className="mt-8 max-w-[26rem] lg:hidden">
-      <div className="relative aspect-[3/2] overflow-hidden bg-navy-700 ring-1 ring-white/40">
-        <Image src={p.src} alt={tr(p.alt)} fill sizes="(min-width: 640px) 26rem, calc(100vw - 2rem)" quality={60} className="object-cover" />
+    <figure className="mt-8 max-w-[28rem] lg:hidden">
+      {/* An upright clip fills the same width as the others, cropped to 4:5 around its subject. */}
+      <div className={`relative overflow-hidden bg-navy-700 ring-1 ring-white/40 ${portrait ? "aspect-[4/5]" : "aspect-video"}`}>
+        <SceneVideo
+          name={film.video}
+          media={NARROW}
+          className={`inset-0 ${portrait ? "[&>img]:object-[50%_62%] [&>video]:object-[50%_62%]" : ""}`}
+        />
       </div>
       <figcaption className="t-tech mt-2.5 flex items-start gap-2 text-[11px] leading-snug text-navy-300">
         <span aria-hidden="true" className="mt-[3px] h-2 w-2 shrink-0 bg-accent" />
-        {tr(p.caption)}
+        {tr(film.caption)}
       </figcaption>
     </figure>
   );

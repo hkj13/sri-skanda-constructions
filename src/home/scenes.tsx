@@ -74,21 +74,14 @@ export function FoundationScene({ label, tags }: { label: string; tags: { plinth
         <pattern id="earth" width={12} height={12} patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
           <path d="M0 0V12" stroke={C.navy700} strokeWidth={2} />
         </pattern>
-        {/* the trench is cut out of the soil as it is dug, so the footage behind shows through */}
-        <mask id="trench-cut" maskUnits="userSpaceOnUse" x={0} y={0} width={800} height={720}>
-          <rect width={800} height={720} fill="#fff" />
-          <rect x={cxm - 170} y={ground} width={340} height={300} fill="#000" className="sc-fall" style={sc(0.08, 0.24)} />
-        </mask>
       </defs>
       {/* soil, in section */}
       <g className="sc" style={sc(0, 0.1)}>
-        <g mask="url(#trench-cut)">
-          <rect x={40} y={ground} width={720} height={380} fill={C.navy950} />
-          <rect x={40} y={ground} width={720} height={380} fill="url(#earth)" />
-        </g>
+        <rect x={40} y={ground} width={720} height={380} fill={C.navy950} />
+        <rect x={40} y={ground} width={720} height={380} fill="url(#earth)" />
       </g>
       {/* the trench, dug down from ground level */}
-      <rect x={cxm - 170} y={ground} width={340} height={300} fill={C.navy} fillOpacity={0.3} className="sc-fall" style={sc(0.08, 0.24)} />
+      <rect x={cxm - 170} y={ground} width={340} height={300} fill={C.navy} fillOpacity={0.55} className="sc-fall" style={sc(0.08, 0.24)} />
       <path d={`M40 ${ground}H760`} pathLength={1} stroke={C.white} strokeWidth={2.5} className="sc-draw" style={sc(0, 0.1)} />
       {/* PCC bed */}
       <rect x={cxm - 150} y={ground + 276} width={300} height={24} fill={C.gray400} stroke={C.navy} className="sc" style={sc(0.24, 0.32, -30)} />

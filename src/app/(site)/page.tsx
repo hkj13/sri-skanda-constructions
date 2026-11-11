@@ -2,7 +2,7 @@ import { ButtonLink, WhatsAppButton } from "@/components/ui/Button";
 import { RenovationControl } from "@/home/BeforeAfter";
 import { ChapterRail, FloorCounter } from "@/home/client";
 import { FacingControl, PlanViewControl, TypeControl } from "@/home/controls";
-import { PhotoInText } from "@/home/layers";
+import { FilmInText } from "@/home/layers";
 import { ChapterText } from "@/home/parts";
 import { KeyAndHand } from "@/home/scenes";
 import { Story } from "@/home/Story";
@@ -58,12 +58,11 @@ export default function HomePage() {
     planning: (
       <ChapterText copy={c.planning}>
         <PlanViewControl />
-        <PhotoInText id="planning" />
       </ChapterText>
     ),
     foundation: (
       <ChapterText copy={c.foundation}>
-        <PhotoInText id="foundation" />
+        <FilmInText id="foundation" />
       </ChapterText>
     ),
     structure: (
@@ -78,6 +77,7 @@ export default function HomePage() {
         }
       >
         <FloorCounter />
+        <FilmInText id="structure" />
       </ChapterText>
     ),
     finishing: <ChapterText copy={c.finishing} />,
@@ -95,12 +95,11 @@ export default function HomePage() {
       <ChapterText copy={c.handover}>
         <p className="t-h2 mt-4 text-accent">{tr(handoverNote)}</p>
         <KeyAndHand label="A key with a lime tag dropping into an open hand." className="mt-6 h-auto w-[min(50%,200px)]" />
-        <PhotoInText id="handover" />
       </ChapterText>
     ),
     sustainable: (
       <ChapterText copy={c.sustainable}>
-        <PhotoInText id="sustainable" />
+        <FilmInText id="sustainable" />
       </ChapterText>
     ),
     start: (
@@ -115,6 +114,7 @@ export default function HomePage() {
           </ButtonLink>
         </div>
         <p className="t-tech mt-8 text-navy-300">{addressLines().join(", ")}</p>
+        <FilmInText id="start" />
       </ChapterText>
     ),
   };
