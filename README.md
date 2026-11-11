@@ -202,9 +202,12 @@ bash scripts/optimize-videos.sh <folder-with-original-mp4s>
 ```
 
 That writes a WebM and an MP4 (at most 10 seconds, 720 px, no sound) and a
-poster frame for each. The clips play only on wide screens with a mouse,
-load when their chapter is near and play only while it is on the stage.
-Phones, Save-Data and reduced motion get each clip's still frame instead.
+still frame for each (a clip can start later in its original; see the
+script). They play in their own colours on every device, load when their
+chapter is near and play only while it is on screen. Save-Data, very slow
+connections and reduced motion get each clip's still frame instead. Which
+clip goes with which chapter, and its caption, is set in `content/home.ts`
+(`storyFilms`).
 
 ---
 
