@@ -101,7 +101,7 @@ Until each item below is supplied, the matching part of the site stays
 hidden or shows a clearly labelled placeholder. Nothing has been invented.
 
 - [ ] **Email address** (`content/site.ts`, `email`). Until then every email link is hidden.
-- [ ] **Real site and project photos**, to replace the four stock photos and five stock videos listed in [`CREDITS.md`](./CREDITS.md). Confirm the licence of the five videos, which came with the old site with no recorded source.
+- [ ] **Real site and project photos**, to replace the ten stock photos and five stock videos listed in [`CREDITS.md`](./CREDITS.md). Confirm the licence of the five videos, which came with the old site with no recorded source.
 - [ ] **Verified testimonials** (`content/testimonials.ts`). The three on the old site are unverified and hidden.
 - [ ] **Experience claim**: how long the company has been building (`claims.experience` in `content/site.ts`). Hidden until confirmed.
 - [ ] **Service area claim**: where the company takes on work (`claims.serviceArea`, and `areaServed` for search engines). Hidden until confirmed.
@@ -206,8 +206,10 @@ still frame for each (a clip can start later in its original; see the
 script). They play in their own colours on every device, load when their
 chapter is near and play only while it is on screen. Save-Data, very slow
 connections and reduced motion get each clip's still frame instead. Which
-clip goes with which chapter, and its caption, is set in `content/home.ts`
-(`storyFilms`).
+clip or photo goes with which chapter, and its caption, is set in
+`content/home.ts` (`storyMedia`). On phones each chapter opens with the
+drawing at the top, then its sheet tag, headline and film or photo, so all
+of them share the first screen.
 
 ---
 

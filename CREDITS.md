@@ -19,7 +19,7 @@ sources were not recorded. They are re-encoded by
 `scripts/optimize-videos.sh` into short, silent WebM and MP4 loops with a
 still frame each, and are shown in their own colours. In the home story
 four of them are framed "site films" beside a chapter's drawing (under the
-chapter text on phones) and one plays in the windows of the wall drawing.
+chapter headline on phones) and one plays in the windows of the wall drawing.
 Each plays only while its chapter is on screen; Save-Data, very slow
 connections and reduced motion get the still frame.
 
@@ -50,6 +50,26 @@ TODO(client): replace each one with a photo from a real project or site.
 | `site-rebar.jpg` | About: The site is checked | `https://images.unsplash.com/photo-1504307651254-35680f356dfd` |
 | `at-the-screen.jpg` | About: Drawn before it is built | `https://images.unsplash.com/photo-1581094794329-c8112a89af12` |
 | `site-worker.jpg` | About: One team, one phone number | `https://images.unsplash.com/photo-1621905252507-b35492cc74b4` |
+
+### Home story photos
+
+Six more photos from Unsplash (Unsplash License), one for each home chapter
+that has no clip. They are used on the home page only: under the chapter
+headline on phones, and beside the drawing or in the text column on wide
+screens. The photographers could not be looked up when they were added;
+each original address is below. Captions are in `content/home.ts`
+(`storyMedia`).
+
+TODO(client): replace each one with a photo from a real project or site.
+
+| File in `public/images` | Home chapter | Original |
+| --- | --- | --- |
+| `plan-pencil.jpg` | Vastu and planning | `https://images.unsplash.com/photo-1542621334-a254cf47733d` |
+| `plan-drawing.jpg` | Architectural planning | `https://images.unsplash.com/photo-1503387762-592deb58ef4e` |
+| `paint-roller.jpg` | Walls and finishing | `https://images.unsplash.com/photo-1562259949-e8e7689d7828` |
+| `site-team.jpg` | Homes and commercial | `https://images.unsplash.com/photo-1541888946425-d81bb19240f5` |
+| `renovation-room.jpg` | Renovation | `https://images.unsplash.com/photo-1517581177682-a085bb7ffb15` |
+| `house-keys.jpg` | Turnkey handover | `https://images.unsplash.com/photo-1560518883-ce09059eeffa` |
 
 ## Illustrations
 
