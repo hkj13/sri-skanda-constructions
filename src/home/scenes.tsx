@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, type CSSProperties } from "react";
-import { BLOCK, VEL } from "@/brand/logo-art";
 import { clamp01, watchScroll } from "@/lib/scroll";
 import { PLOT } from "@/scene/building";
 import { C, ISO, isoPoint, sc } from "@/scene/iso-core";
@@ -21,15 +20,13 @@ const VB = `0 0 ${ISO.w} ${ISO.h}`;
 /* ── 00 Groundbreaking: dawn and the mark ───────────────────────────── */
 
 /**
- * The opening drawing: dawn on the horizon and the company mark standing
- * on the plot. The plot itself, with its stakes and strings, is drawn by
- * PlotMorph (layers.tsx), because it carries on into the next chapter.
- * Everything here fades as the plot turns into the Vastu plan.
+ * The opening drawing: dawn on the horizon. The plot, with its stakes and
+ * strings, and the company mark standing on it are drawn by PlotMorph
+ * (layers.tsx), because the plot carries on into the next chapter.
+ * The dawn fades as the plot turns into the Vastu plan.
  */
 export function GroundScene({ label }: { label: string }) {
-  const { x0, x1, z0, z1 } = PLOT;
-  const [cx, cy] = isoPoint((x0 + x1) / 2, 0, (z0 + z1) / 2 + 1.5);
-  const s = 4.3;
+  const { x0, z0 } = PLOT;
   const horizon = isoPoint(x0, 0, z0)[1] - 64;
   return (
     <svg viewBox={VB} className={SCENE_SVG} role="img" aria-label={label} preserveAspectRatio="xMidYMid meet">
@@ -42,15 +39,6 @@ export function GroundScene({ label }: { label: string }) {
         </g>
         </g>
         <path d={`M0 ${horizon}H${ISO.w}`} stroke={C.navy300} strokeOpacity={0.5} strokeWidth={1} />
-      </g>
-      {/* the mark: drawn in blueprint strokes, then filled; lifts away as the plan forms */}
-      <g style={{ opacity: "clamp(0, calc((0.66 - var(--p)) / 0.36), 1)", transform: "translateY(calc(var(--p) * -110px))" }}>
-        <g transform={`translate(${cx - 32 * s} ${cy - 60 * s}) scale(${s})`}>
-          <path d={`${BLOCK} ${VEL}`} fill={C.lime} fillRule="evenodd" className="gb-fill" />
-          <path d={BLOCK} pathLength={1} fill="none" stroke={C.white} strokeWidth={0.45} className="gb-draw" style={{ "--d": "1.5s" } as CSSProperties} />
-          <path d={VEL} pathLength={1} fill="none" stroke={C.white} strokeWidth={0.45} className="gb-draw" style={{ "--d": "2s" } as CSSProperties} />
-        </g>
-        <path d={`M${cx - 150} ${cy}H${cx + 150}`} stroke={C.white} strokeWidth={1.4} className="gb-fill" />
       </g>
     </svg>
   );

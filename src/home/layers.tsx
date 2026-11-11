@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
+import { BLOCK, VEL } from "@/brand/logo-art";
 import { Drawing } from "@/scene/Drawing";
 import { IsoBuilding } from "@/scene/Iso";
 import { PLOT } from "@/scene/building";
@@ -58,6 +59,16 @@ for (let z = Math.ceil(z0); z < z1; z += 2) GRID_Z.push(z);
 
 const f = (n: number) => n.toFixed(1);
 
+/** Where the company mark stands on the plot, and its size. */
+const [MARK_X, MARK_Y] = isoPoint((x0 + x1) / 2, 0, (z0 + z1) / 2 + 1.5);
+const MARK_S = 4.3;
+
+/**
+ * How far a stake's label sits from its stake. Stake D is behind the mark,
+ * so its label starts clear of the mark's right edge.
+ */
+const tagDx = (n: number) => (n === 0 ? MARK_X + 32 * MARK_S + 10 - isoPoint(x0, 0, z0)[0] : CORNERS[n][3] === "start" ? 12 : -12);
+
 function geometry(e: number) {
   const pts = CORNERS.map(([x, z]) => at(x, z, e));
   const outline = `M${pts.map(([x, y]) => `${f(x)} ${f(y)}`).join("L")}Z`;
@@ -103,11 +114,22 @@ function PlotMorph() {
     const stakes = q<SVGGElement>("[data-m=stake]");
     const tags = q<SVGGElement>("[data-m=tag]");
     const road = q<SVGGElement>("[data-m=road]")[0];
+    const mark = q<SVGGElement>("[data-m=mark]")[0];
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let last = -1;
     let lastFade = -1;
+    let lastMark = -1;
     const update = () => {
       const g = story.g;
+      // The mark lifts off the plot and fades from the first scroll.
+      const p = reduced ? (g >= 1 ? 1 : 0) : Math.min(1, g);
+      if (Math.abs(p - lastMark) > 0.0004) {
+        lastMark = p;
+        const k = Math.min(1, Math.max(0, (0.66 - p) / 0.36));
+        mark.style.opacity = k.toFixed(3);
+        mark.style.visibility = k <= 0 ? "hidden" : "";
+        mark.setAttribute("transform", `translate(0 ${f(p * -110)})`);
+      }
       const e = reduced ? (g >= 1 ? 1 : 0) : morphAt(g);
       // The plot's grid gives way to the Vastu grid early in chapter 1.
       const fade = reduced ? (g >= 1 ? 0 : 1) : 1 - Math.min(1, Math.max(0, (g - 1) / 0.16));
@@ -136,8 +158,7 @@ function PlotMorph() {
       const tagK = Math.max(0, 1 - e * 2.4).toFixed(3);
       tags.forEach((t, n) => {
         const [x, y] = pts[n];
-        const side = CORNERS[n][3];
-        t.setAttribute("transform", `translate(${f(x + (side === "start" ? 12 : -12))} ${f(y - 28)})`);
+        t.setAttribute("transform", `translate(${f(x + tagDx(n))} ${f(y - 28)})`);
         t.style.opacity = tagK;
       });
       const [mx, my] = at((x0 + x1) / 2, z1, e);
@@ -174,7 +195,7 @@ function PlotMorph() {
         {start.pts.map(([sx, sy], n) => {
           const side = CORNERS[n][3];
           return (
-            <g key={n} data-m="tag" transform={`translate(${f(sx + (side === "start" ? 12 : -12))} ${f(sy - 28)})`}>
+            <g key={n} data-m="tag" transform={`translate(${f(sx + tagDx(n))} ${f(sy - 28)})`}>
               <Tag x={0} y={0} anchor={side} className="gb-tag" style={i(n)}>
                 {`Stake ${CORNERS[n][2]}`}
               </Tag>
@@ -185,6 +206,18 @@ function PlotMorph() {
           <Tag x={0} y={0} anchor="middle" className="gb-tag" style={i(5)}>
             Road
           </Tag>
+        </g>
+        {/* The company mark stands on the plot, in front of its lines: drawn
+            in blueprint strokes, then filled. */}
+        <g data-m="mark">
+          <g transform={`translate(${f(MARK_X - 32 * MARK_S)} ${f(MARK_Y - 60 * MARK_S)}) scale(${MARK_S})`}>
+            {/* paper behind the cut-out, so no plot line shows inside the mark */}
+            <path d={BLOCK} fill={C.navy} className="gb-fill" />
+            <path d={`${BLOCK} ${VEL}`} fill={C.lime} fillRule="evenodd" className="gb-fill" />
+            <path d={BLOCK} pathLength={1} fill="none" stroke={C.white} strokeWidth={0.45} className="gb-draw" style={{ "--d": "1.5s" } as CSSProperties} />
+            <path d={VEL} pathLength={1} fill="none" stroke={C.white} strokeWidth={0.45} className="gb-draw" style={{ "--d": "2s" } as CSSProperties} />
+          </g>
+          <path d={`M${f(MARK_X - 150)} ${f(MARK_Y)}H${f(MARK_X + 150)}`} stroke={C.white} strokeWidth={1.4} className="gb-fill" />
         </g>
       </g>
     </svg>
